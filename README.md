@@ -1,68 +1,114 @@
-# Test Users API — Vercel Deploy
+# QA Practice API v2.0 — Vercel
 
-REST API для тестирования в Postman. FastAPI + JWT, данные в памяти.
+Расширенный REST API для практики в Postman. 5 предметных областей, 38 эндпоинтов, JWT auth.
 
 ## Структура проекта
 
 ```
 ├── api/
 │   └── index.py       # Весь код API
-├── requirements.txt   # Зависимости
-├── vercel.json        # Конфиг Vercel
-└── README.md
+├── requirements.txt
+└── vercel.json
 ```
 
-## Деплой на Vercel
+## Деплой
+Просто замени `index.py` в своём GitHub репо и запушь — Vercel передеплоит автоматически:
 
-### Вариант 1 — через GitHub (рекомендую)
-1. Создай репо на GitHub, закинь туда все файлы
-2. Зайди на https://vercel.com → New Project → Import Git Repository
-3. Выбери репо → Deploy
-4. Получишь URL: `https://your-project.vercel.app`
-
-### Вариант 2 — через Vercel CLI
 ```bash
-npm i -g vercel
-vercel login
-vercel --prod
+git add .
+git commit -m "feat: add products, posts, tasks, payments endpoints"
+git push
 ```
 
-## Эндпоинты
+## Тестовые аккаунты
+| username | password   | role  |
+|----------|-----------|-------|
+| admin    | admin123  | admin |
+| tester   | tester123 | user  |
 
-| Метод | URL | Auth | Описание |
-|-------|-----|------|---------|
-| GET | `/` | ❌ | Health check |
-| GET | `/health` | ❌ | Статус + кол-во юзеров |
-| POST | `/auth/register` | ❌ | Регистрация |
-| POST | `/auth/login` | ❌ | Логин → JWT токен |
-| GET | `/users/me` | ✅ | Свой профиль |
-| GET | `/users/` | ✅ | Все пользователи |
-| GET | `/users/{id}` | ✅ | Юзер по ID |
-| PUT | `/users/{id}` | ✅ | Обновить юзера |
-| DELETE | `/users/{id}` | ✅ | Удалить юзера |
+---
 
-## Тестовый аккаунт
-- username: `admin`
-- password: `admin123`
+## 📚 Эндпоинты по модулям
 
-## Как пользоваться в Postman
+### 👤 Auth
+| Метод | URL | Auth |
+|---|---|---|
+| POST | `/auth/register` | ❌ |
+| POST | `/auth/login` | ❌ |
 
-### Шаг 1 — Логин
-- POST `{{base_url}}/auth/login`
-- Body: `x-www-form-urlencoded`
-  - `username` = `admin`
-  - `password` = `admin123`
-- Скопируй `access_token` из ответа
+### 👥 Users
+| Метод | URL | Auth |
+|---|---|---|
+| GET | `/users/me` | ✅ |
+| GET | `/users/` | ✅ |
+| GET | `/users/{id}` | ✅ |
+| PUT | `/users/{id}` | ✅ |
+| DELETE | `/users/{id}` | ✅ |
 
-### Шаг 2 — Защищённые запросы
-- Headers: `Authorization: Bearer <токен>`
+### 🛍️ Products
+| Метод | URL | Auth | Особенности |
+|---|---|---|---|
+| GET | `/products/` | ❌ | Query: `?category=`, `?min_price=`, `?max_price=` |
+| POST | `/products/` | ✅ | Создать товар |
+| GET | `/products/{id}` | ❌ | Публичный просмотр |
+| PUT | `/products/{id}` | ✅ | |
+| DELETE | `/products/{id}` | ✅ | |
+| GET | `/products/categories/all` | ❌ | Список категорий |
 
-### Swagger UI
-Открой `{{base_url}}/docs` — интерактивная документация в браузере.
+### 📝 Posts + Comments
+| Метод | URL | Auth | Особенности |
+|---|---|---|---|
+| GET | `/posts/` | ❌ | Query: `?tag=qa` |
+| POST | `/posts/` | ✅ | |
+| GET | `/posts/{id}` | ❌ | Включает comments_count |
+| PUT | `/posts/{id}` | ✅ | Только автор/admin |
+| DELETE | `/posts/{id}` | ✅ | Только автор/admin, каскадно удаляет комменты |
+| GET | `/posts/{id}/comments` | ❌ | |
+| POST | `/posts/{id}/comments` | ✅ | |
+| PUT | `/posts/{id}/comments/{cid}` | ✅ | Только автор/admin |
+| DELETE | `/posts/{id}/comments/{cid}` | ✅ | Только автор/admin |
 
-## ⚠️ Важно про Vercel
-Vercel serverless — каждый холодный старт пересоздаёт in-memory DB.
-Это значит: созданные юзеры могут пропасть через ~10 мин неактивности.
-Но `admin` всегда есть — он создаётся при старте.
+### ✅ Tasks
+| Метод | URL | Auth | Особенности |
+|---|---|---|---|
+| GET | `/tasks/` | ✅ | Query: `?status=`, `?priority=`, `?assigned_to=` |
+| POST | `/tasks/` | ✅ | Валидация priority/status, иначе 400 |
+| GET | `/tasks/{id}` | ✅ | |
+| PUT | `/tasks/{id}` | ✅ | |
+| PATCH | `/tasks/{id}/status?new_status=done` | ✅ | Быстрая смена статуса |
+| DELETE | `/tasks/{id}` | ✅ | |
 
-Если нужно постоянное хранение — добавь Vercel Postgres (бесплатно в их dashboard).
+**Валидные значения:** priority = `low/medium/high`, status = `todo/in_progress/done`
+
+### 💳 Payments
+| Метод | URL | Auth | Особенности |
+|---|---|---|---|
+| GET | `/payments/` | ✅ | Видишь только свои (admin — все). Query: `?status=` |
+| POST | `/payments/` | ✅ | 400 если self-payment, 404 если recipient не найден |
+| GET | `/payments/{id}` | ✅ | 403 если не участник платежа |
+| PATCH | `/payments/{id}/refund` | ✅ | completed → refunded, только отправитель/admin |
+| GET | `/payments/stats/summary` | ✅ | Статистика по сумме и статусам |
+
+---
+
+## 🧪 Сценарии для практики QA
+
+**Позитивные:**
+1. Регистрация → логин → получить токен → GET /users/me
+2. Создать товар → отфильтровать по категории → проверить что он есть
+3. Создать пост → добавить комментарий → удалить пост → проверить что коммент тоже удалился
+4. Создать задачу с priority=high → PATCH status=done → GET и проверить статус
+5. Отправить платёж → GET stats/summary → проверить сумму
+
+**Негативные (то что обязательно проверяет QA):**
+- Логин с неверным паролем → 401
+- Запрос без токена на защищённый эндпоинт → 401
+- GET несуществующего ID → 404
+- POST задачи с priority="urgent" (невалидное значение) → 400
+- Платёж самому себе → 400
+- Платёж на несуществующего юзера → 404
+- Обновить чужой пост → 403
+- Refund платежа который уже refunded → 400
+
+## Swagger UI
+`{{base_url}}/docs` — интерактивная документация, можно тестировать прямо в браузере.
