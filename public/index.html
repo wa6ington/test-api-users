@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QA TestZone — Practice Site</title>
+<style>
+  :root {
+    --bg: #0f172a; --bg2: #1e293b; --bg3: #253347;
+    --teal: #0d9488; --teal2: #14b8a6; --teal3: #5eead4;
+    --text: #f1f5f9; --text2: #94a3b8; --text3: #64748b;
+    --border: #2a3f55; --border2: #334d63;
+    --green: #22c55e; --red: #ef4444; --yellow: #f59e0b; --blue: #3b82f6; --purple: #8b5cf6;
+    --radius: 10px; --card: #1e293b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* NAV */
+  nav { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; height: 56px; gap: 0; position: sticky; top: 0; z-index: 100; }
+  .nav-logo { font-size: 16px; font-weight: 700; color: var(--teal2); margin-right: 32px; cursor: pointer; letter-spacing: -.3px; }
+  .nav-logo span { color: var(--text2); font-weight: 400; }
+  .nav-links { display: flex; gap: 4px; flex: 1; }
+  .nav-link { padding: 6px 14px; border-radius: 6px; font-size: 13px; color: var(--text2); cursor: pointer; transition: all .15s; border: none; background: none; }
+  .nav-link:hover { background: var(--bg3); color: var(--text); }
+  .nav-link.active { background: rgba(13,148,136,.15); color: var(--teal2); }
+  .nav-right { display: flex; align-items: center; gap: 10px; }
+  .nav-user { font-size: 13px; color: var(--text2); }
+  .btn { padding: 7px 16px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: all .15s; }
+  .btn-teal { background: var(--teal); color: #fff; }
+  .btn-teal:hover { background: var(--teal2); }
+  .btn-outline { background: transparent; border: 1px solid var(--border2); color: var(--text2); }
+  .btn-outline:hover { border-color: var(--teal); color: var(--teal2); }
+  .btn-red { background: rgba(239,68,68,.15); color: var(--red); border: 1px solid rgba(239,68,68,.3); }
+  .btn-red:hover { background: rgba(239,68,68,.25); }
+  .btn-sm { padding: 4px 10px; font-size: 12px; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+  /* PAGES */
+  .page { display: none; max-width: 1100px; margin: 0 auto; padding: 28px 24px; }
+  .page.active { display: block; }
+
+  /* AUTH PAGE */
+  .auth-wrap { min-height: calc(100vh - 56px); display: flex; align-items: center; justify-content: center; }
+  .auth-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 36px; width: 360px; }
+  .auth-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .auth-sub { font-size: 13px; color: var(--text2); margin-bottom: 24px; }
+  .auth-tabs { display: flex; gap: 4px; margin-bottom: 20px; background: var(--bg3); border-radius: 8px; padding: 4px; }
+  .auth-tab { flex: 1; text-align: center; padding: 7px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text2); transition: all .15s; }
+  .auth-tab.active { background: var(--teal); color: #fff; font-weight: 500; }
+  .form-group { margin-bottom: 14px; }
+  .form-label { font-size: 12px; color: var(--text2); margin-bottom: 5px; display: block; font-weight: 500; }
+  .form-input { width: 100%; background: var(--bg3); border: 1px solid var(--border2); border-radius: 7px; padding: 9px 12px; color: var(--text); font-size: 13px; transition: border-color .15s; outline: none; }
+  .form-input:focus { border-color: var(--teal); }
+  .form-error { font-size: 12px; color: var(--red); margin-top: 12px; display: none; }
+  .form-error.show { display: block; }
+  .test-hint { font-size: 11px; color: var(--text3); margin-top: 8px; text-align: center; }
+  .test-hint b { color: var(--teal3); }
+
+  /* CARDS GRID */
+  .page-title { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .page-sub { font-size: 13px; color: var(--text2); margin-bottom: 20px; }
+  .grid { display: grid; gap: 16px; }
+  .grid-3 { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+  .grid-2 { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; transition: border-color .15s; }
+  .card:hover { border-color: var(--border2); }
+
+  /* PRODUCT CARD */
+  .product-img { height: 100px; background: var(--bg3); border-radius: 7px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; font-size: 32px; }
+  .product-name { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .product-cat { font-size: 11px; color: var(--teal2); background: rgba(13,148,136,.1); padding: 2px 7px; border-radius: 4px; display: inline-block; margin-bottom: 8px; }
+  .product-desc { font-size: 12px; color: var(--text2); margin-bottom: 12px; min-height: 32px; }
+  .product-footer { display: flex; align-items: center; justify-content: space-between; }
+  .product-price { font-size: 18px; font-weight: 700; color: var(--teal2); }
+  .product-stock { font-size: 11px; color: var(--text3); }
+
+  /* FILTERS */
+  .filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+  .filter-input { background: var(--bg2); border: 1px solid var(--border); border-radius: 7px; padding: 7px 12px; color: var(--text); font-size: 13px; outline: none; }
+  .filter-input:focus { border-color: var(--teal); }
+  .filter-label { font-size: 12px; color: var(--text2); }
+
+  /* POST CARD */
+  .post-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; cursor: pointer; }
+  .post-title:hover { color: var(--teal2); }
+  .post-body { font-size: 13px; color: var(--text2); margin-bottom: 10px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .post-meta { display: flex; align-items: center; gap: 10px; font-size: 11px; color: var(--text3); }
+  .tag { font-size: 10px; color: var(--teal3); background: rgba(94,234,212,.08); padding: 2px 6px; border-radius: 4px; }
+  .comment-count { color: var(--blue); }
+
+  /* TASKS */
+  .task-row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; transition: border-color .15s; }
+  .task-row:hover { border-color: var(--border2); }
+  .task-title-wrap { flex: 1; }
+  .task-title { font-size: 14px; font-weight: 500; }
+  .task-desc { font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .badge { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 4px; white-space: nowrap; }
+  .badge-todo { background: rgba(148,163,184,.15); color: var(--text2); }
+  .badge-inprogress { background: rgba(59,130,246,.15); color: var(--blue); }
+  .badge-done { background: rgba(34,197,94,.12); color: var(--green); }
+  .badge-high { background: rgba(239,68,68,.12); color: var(--red); }
+  .badge-medium { background: rgba(245,158,11,.12); color: var(--yellow); }
+  .badge-low { background: rgba(148,163,184,.12); color: var(--text2); }
+
+  /* PAYMENTS */
+  .payment-row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; }
+  .payment-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .payment-info { flex: 1; }
+  .payment-desc { font-size: 14px; font-weight: 500; }
+  .payment-meta { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .payment-amount { font-size: 16px; font-weight: 700; }
+  .amount-out { color: var(--red); }
+  .amount-in { color: var(--green); }
+  .badge-completed { background: rgba(34,197,94,.12); color: var(--green); }
+  .badge-refunded { background: rgba(245,158,11,.12); color: var(--yellow); }
+
+  /* MODAL */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 200; display: none; align-items: center; justify-content: center; }
+  .modal-overlay.show { display: flex; }
+  .modal { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 28px; width: 480px; max-width: 95vw; max-height: 85vh; overflow-y: auto; }
+  .modal-title { font-size: 17px; font-weight: 700; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+  .modal-close { cursor: pointer; color: var(--text3); font-size: 20px; line-height: 1; background: none; border: none; color: var(--text2); }
+  .modal-close:hover { color: var(--text); }
+
+  /* TOAST */
+  .toast-wrap { position: fixed; bottom: 24px; right: 24px; z-index: 300; display: flex; flex-direction: column; gap: 8px; }
+  .toast { padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; animation: slideIn .2s ease; max-width: 320px; }
+  .toast-success { background: rgba(34,197,94,.15); border: 1px solid rgba(34,197,94,.3); color: var(--green); }
+  .toast-error { background: rgba(239,68,68,.15); border: 1px solid rgba(239,68,68,.3); color: var(--red); }
+  .toast-info { background: rgba(59,130,246,.15); border: 1px solid rgba(59,130,246,.3); color: var(--blue); }
+  @keyframes slideIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+
+  /* PROFILE */
+  .profile-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 28px; }
+  .profile-avatar { width: 72px; height: 72px; border-radius: 50%; background: rgba(13,148,136,.2); display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 700; color: var(--teal2); margin-bottom: 14px; }
+  .profile-name { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .profile-email { font-size: 13px; color: var(--text2); margin-bottom: 16px; }
+  .profile-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .profile-row:last-child { border-bottom: none; }
+  .profile-key { color: var(--text2); }
+
+  /* STATS ROW */
+  .stats-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+  .stat-val { font-size: 24px; font-weight: 700; color: var(--teal2); }
+  .stat-label { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+  /* EMPTY STATE */
+  .empty { text-align: center; padding: 48px 24px; }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .empty-sub { font-size: 13px; color: var(--text2); }
+
+  /* LOADING */
+  .loading { text-align: center; padding: 40px; color: var(--text2); font-size: 14px; }
+
+  /* POST DETAIL */
+  .post-detail-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+  .post-detail-body { font-size: 14px; color: var(--text2); line-height: 1.7; margin-bottom: 24px; }
+  .comment-item { background: var(--bg3); border-radius: 8px; padding: 12px; margin-bottom: 8px; font-size: 13px; }
+  .comment-item .comment-author { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
+
+  /* FORM MODAL */
+  .form-row { margin-bottom: 12px; }
+  select.form-input { cursor: pointer; }
+
+  .divider { height: 1px; background: var(--border); margin: 16px 0; }
+  .section-title { font-size: 13px; font-weight: 600; color: var(--text2); margin-bottom: 12px; text-transform: uppercase; letter-spacing: .05em; }
+  .action-bar { display: flex; gap: 8px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo" onclick="goHome()">QA<span>TestZone</span></div>
+  <div class="nav-links">
+    <button class="nav-link" onclick="showPage('shop')">Магазин</button>
+    <button class="nav-link" onclick="showPage('blog')">Блог</button>
+    <button class="nav-link" onclick="showPage('tasks')">Задачи</button>
+    <button class="nav-link" onclick="showPage('payments')">Платежи</button>
+    <button class="nav-link" onclick="showPage('profile')">Профиль</button>
+  </div>
+  <div class="nav-right">
+    <span class="nav-user" id="nav-user"></span>
+    <button class="btn btn-outline btn-sm" id="nav-logout" onclick="logout()" style="display:none">Выйти</button>
+  </div>
+</nav>
+
+<!-- AUTH PAGE -->
+<div class="page active" id="page-auth">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-title">Добро пожаловать</div>
+      <div class="auth-sub">Войди или зарегистрируйся для доступа к платформе</div>
+      <div class="auth-tabs">
+        <div class="auth-tab active" onclick="switchAuthTab('login')">Войти</div>
+        <div class="auth-tab" onclick="switchAuthTab('register')">Регистрация</div>
+      </div>
+      <div id="form-login">
+        <div class="form-group"><label class="form-label">Имя пользователя</label><input class="form-input" id="login-username" placeholder="admin" value="admin"></div>
+        <div class="form-group"><label class="form-label">Пароль</label><input class="form-input" type="password" id="login-password" placeholder="••••••" value="admin123"></div>
+        <div class="form-error" id="login-error"></div>
+        <button class="btn btn-teal" style="width:100%;margin-top:4px" onclick="doLogin()">Войти</button>
+        <div class="test-hint">Тестовые аккаунты: <b>admin / admin123</b> или <b>tester / tester123</b></div>
+      </div>
+      <div id="form-register" style="display:none">
+        <div class="form-group"><label class="form-label">Имя пользователя</label><input class="form-input" id="reg-username" placeholder="newuser"></div>
+        <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="reg-email" placeholder="user@test.com"></div>
+        <div class="form-group"><label class="form-label">Пароль</label><input class="form-input" type="password" id="reg-password" placeholder="••••••"></div>
+        <div class="form-error" id="reg-error"></div>
+        <button class="btn btn-teal" style="width:100%;margin-top:4px" onclick="doRegister()">Зарегистрироваться</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SHOP PAGE -->
+<div class="page" id="page-shop">
+  <div class="page-title">Магазин</div>
+  <div class="page-sub">Каталог товаров. Можно фильтровать по категории и цене.</div>
+  <div class="filters">
+    <span class="filter-label">Категория:</span>
+    <select class="filter-input" id="filter-cat" onchange="loadProducts()"><option value="">Все</option></select>
+    <span class="filter-label">Цена от:</span>
+    <input class="filter-input" type="number" id="filter-min" placeholder="0" style="width:80px" onchange="loadProducts()">
+    <span class="filter-label">до:</span>
+    <input class="filter-input" type="number" id="filter-max" placeholder="9999" style="width:80px" onchange="loadProducts()">
+    <button class="btn btn-teal btn-sm" onclick="openProductModal()">+ Добавить товар</button>
+  </div>
+  <div class="grid grid-3" id="products-grid"><div class="loading">Загрузка...</div></div>
+</div>
+
+<!-- BLOG PAGE -->
+<div class="page" id="page-blog">
+  <div id="blog-list-view">
+    <div class="page-title">Блог</div>
+    <div class="page-sub">Статьи и новости. Кликни на пост чтобы читать и комментировать.</div>
+    <div class="action-bar">
+      <input class="filter-input" id="filter-tag" placeholder="Фильтр по тегу..." style="width:180px" onkeyup="filterPosts()">
+      <button class="btn btn-teal btn-sm" onclick="openPostModal()">+ Новый пост</button>
+    </div>
+    <div class="grid grid-2" id="posts-grid"><div class="loading">Загрузка...</div></div>
+  </div>
+  <div id="blog-detail-view" style="display:none">
+    <button class="btn btn-outline btn-sm" onclick="closeBlogDetail()" style="margin-bottom:16px">← Назад</button>
+    <div id="blog-detail-content"></div>
+  </div>
+</div>
+
+<!-- TASKS PAGE -->
+<div class="page" id="page-tasks">
+  <div class="page-title">Задачи</div>
+  <div class="page-sub">Управление задачами с приоритетами и статусами.</div>
+  <div class="action-bar">
+    <select class="filter-input" id="filter-status" onchange="loadTasks()">
+      <option value="">Все статусы</option>
+      <option value="todo">Todo</option>
+      <option value="in_progress">In Progress</option>
+      <option value="done">Done</option>
+    </select>
+    <select class="filter-input" id="filter-priority" onchange="loadTasks()">
+      <option value="">Все приоритеты</option>
+      <option value="high">High</option>
+      <option value="medium">Medium</option>
+      <option value="low">Low</option>
+    </select>
+    <button class="btn btn-teal btn-sm" onclick="openTaskModal()">+ Новая задача</button>
+  </div>
+  <div id="tasks-list"><div class="loading">Загрузка...</div></div>
+</div>
+
+<!-- PAYMENTS PAGE -->
+<div class="page" id="page-payments">
+  <div class="page-title">Платежи</div>
+  <div class="page-sub">История транзакций вашего аккаунта.</div>
+  <div id="payment-stats" class="stats-row"></div>
+  <div class="action-bar">
+    <select class="filter-input" id="filter-pay-status" onchange="loadPayments()">
+      <option value="">Все</option>
+      <option value="completed">Completed</option>
+      <option value="refunded">Refunded</option>
+    </select>
+    <button class="btn btn-teal btn-sm" onclick="openPaymentModal()">+ Отправить платёж</button>
+  </div>
+  <div id="payments-list"><div class="loading">Загрузка...</div></div>
+</div>
+
+<!-- PROFILE PAGE -->
+<div class="page" id="page-profile">
+  <div class="page-title">Профиль</div>
+  <div class="page-sub">Информация о вашем аккаунте.</div>
+  <div class="profile-card" id="profile-content"><div class="loading">Загрузка...</div></div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-product">
+  <div class="modal">
+    <div class="modal-title">Добавить товар <button class="modal-close" onclick="closeModal('modal-product')">✕</button></div>
+    <div class="form-row"><label class="form-label">Название</label><input class="form-input" id="p-name" placeholder="iPhone 15"></div>
+    <div class="form-row"><label class="form-label">Категория</label><input class="form-input" id="p-cat" placeholder="Electronics"></div>
+    <div class="form-row"><label class="form-label">Цена</label><input class="form-input" type="number" id="p-price" placeholder="999.99"></div>
+    <div class="form-row"><label class="form-label">Остаток на складе</label><input class="form-input" type="number" id="p-stock" placeholder="100"></div>
+    <div class="form-row"><label class="form-label">Описание</label><textarea class="form-input" id="p-desc" rows="2" placeholder="Описание товара..."></textarea></div>
+    <button class="btn btn-teal" style="width:100%;margin-top:8px" onclick="createProduct()">Добавить</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-post">
+  <div class="modal">
+    <div class="modal-title">Новый пост <button class="modal-close" onclick="closeModal('modal-post')">✕</button></div>
+    <div class="form-row"><label class="form-label">Заголовок</label><input class="form-input" id="post-title-inp" placeholder="Заголовок поста"></div>
+    <div class="form-row"><label class="form-label">Содержание</label><textarea class="form-input" id="post-body-inp" rows="4" placeholder="Текст поста..."></textarea></div>
+    <div class="form-row"><label class="form-label">Теги (через запятую)</label><input class="form-input" id="post-tags-inp" placeholder="qa, testing"></div>
+    <button class="btn btn-teal" style="width:100%;margin-top:8px" onclick="createPost()">Опубликовать</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-task">
+  <div class="modal">
+    <div class="modal-title">Новая задача <button class="modal-close" onclick="closeModal('modal-task')">✕</button></div>
+    <div class="form-row"><label class="form-label">Название</label><input class="form-input" id="t-title" placeholder="Название задачи"></div>
+    <div class="form-row"><label class="form-label">Описание</label><textarea class="form-input" id="t-desc" rows="2" placeholder="Описание..."></textarea></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="form-row"><label class="form-label">Приоритет</label>
+        <select class="form-input" id="t-priority"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select></div>
+      <div class="form-row"><label class="form-label">Статус</label>
+        <select class="form-input" id="t-status"><option value="todo" selected>Todo</option><option value="in_progress">In Progress</option><option value="done">Done</option></select></div>
+    </div>
+    <div class="form-row"><label class="form-label">Дедлайн</label><input class="form-input" type="date" id="t-due"></div>
+    <button class="btn btn-teal" style="width:100%;margin-top:8px" onclick="createTask()">Создать</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-payment">
+  <div class="modal">
+    <div class="modal-title">Отправить платёж <button class="modal-close" onclick="closeModal('modal-payment')">✕</button></div>
+    <div class="form-row"><label class="form-label">Получатель (User ID)</label><input class="form-input" id="pay-to" placeholder="Вставь ID пользователя"></div>
+    <div class="form-row"><label class="form-label">Сумма (USD)</label><input class="form-input" type="number" id="pay-amount" placeholder="50.00"></div>
+    <div class="form-row"><label class="form-label">Описание</label><input class="form-input" id="pay-desc" placeholder="Оплата курса"></div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:12px">💡 ID пользователей можно найти в Профиле или через GET /users/</div>
+    <button class="btn btn-teal" style="width:100%;margin-top:4px" onclick="createPayment()">Отправить</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-comment">
+  <div class="modal">
+    <div class="modal-title">Добавить комментарий <button class="modal-close" onclick="closeModal('modal-comment')">✕</button></div>
+    <div class="form-row"><label class="form-label">Комментарий</label><textarea class="form-input" id="comment-text" rows="3" placeholder="Напиши комментарий..."></textarea></div>
+    <button class="btn btn-teal" style="width:100%;margin-top:8px" onclick="submitComment()">Отправить</button>
+  </div>
+</div>
+
+<!-- TOASTS -->
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<script>
+const BASE = 'https://test-api-users.vercel.app';
+let token = '';
+let currentUser = null;
+let allPosts = [];
+let currentPostId = null;
+const catEmoji = {Electronics:'📱',Shoes:'👟',Books:'📚',Kitchen:'☕',default:'📦'};
+
+function api(path, opts={}) {
+  const headers = {'Content-Type':'application/json', ...(opts.headers||{})};
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  return fetch(BASE + path, {...opts, headers}).then(async r => {
+    const j = await r.json().catch(()=>({}));
+    if (!r.ok) throw {status: r.status, detail: j.detail || 'Ошибка'};
+    return j;
+  });
+}
+function apiForm(path, data) {
+  const body = new URLSearchParams(data);
+  const headers = {};
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  return fetch(BASE + path, {method:'POST', headers, body}).then(async r => {
+    const j = await r.json().catch(()=>({}));
+    if (!r.ok) throw {status: r.status, detail: j.detail || 'Ошибка'};
+    return j;
+  });
+}
+function toast(msg, type='success') {
+  const w = document.getElementById('toast-wrap');
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.textContent = msg;
+  w.appendChild(t);
+  setTimeout(()=>t.remove(), 3000);
+}
+function showPage(name) {
+  if (!token && name !== 'auth') { toast('Сначала войди в систему', 'error'); return; }
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+  const pages = {shop:0,blog:1,tasks:2,payments:3,profile:4};
+  if (pages[name] !== undefined) document.querySelectorAll('.nav-link')[pages[name]].classList.add('active');
+  if (name==='shop') { loadCategories(); loadProducts(); }
+  if (name==='blog') loadPosts();
+  if (name==='tasks') loadTasks();
+  if (name==='payments') { loadPaymentStats(); loadPayments(); }
+  if (name==='profile') loadProfile();
+}
+function goHome() { showPage(token ? 'shop' : 'auth'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+
+// AUTH
+function switchAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active', (tab==='login'&&i===0)||(tab==='register'&&i===1)));
+  document.getElementById('form-login').style.display = tab==='login'?'block':'none';
+  document.getElementById('form-register').style.display = tab==='register'?'block':'none';
+}
+async function doLogin() {
+  const u = document.getElementById('login-username').value.trim();
+  const p = document.getElementById('login-password').value;
+  const err = document.getElementById('login-error');
+  err.classList.remove('show');
+  try {
+    const r = await apiForm('/auth/login', {username:u, password:p});
+    token = r.access_token;
+    currentUser = r.user;
+    document.getElementById('nav-user').textContent = '👤 ' + r.user.username;
+    document.getElementById('nav-logout').style.display = 'block';
+    toast('Добро пожаловать, ' + r.user.username + '!');
+    showPage('shop');
+  } catch(e) {
+    err.textContent = e.detail || 'Неверный логин или пароль';
+    err.classList.add('show');
+  }
+}
+async function doRegister() {
+  const u = document.getElementById('reg-username').value.trim();
+  const em = document.getElementById('reg-email').value.trim();
+  const p = document.getElementById('reg-password').value;
+  const err = document.getElementById('reg-error');
+  err.classList.remove('show');
+  if (!u || !em || !p) { err.textContent='Заполни все поля'; err.classList.add('show'); return; }
+  try {
+    await api('/auth/register', {method:'POST', body: JSON.stringify({username:u,email:em,password:p})});
+    toast('Аккаунт создан! Теперь войди.', 'info');
+    switchAuthTab('login');
+    document.getElementById('login-username').value = u;
+  } catch(e) {
+    err.textContent = e.detail || 'Ошибка регистрации';
+    err.classList.add('show');
+  }
+}
+function logout() {
+  token = ''; currentUser = null;
+  document.getElementById('nav-user').textContent = '';
+  document.getElementById('nav-logout').style.display = 'none';
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-auth').classList.add('active');
+  toast('Вышли из системы', 'info');
+}
+
+// SHOP
+async function loadCategories() {
+  try {
+    const r = await api('/products/categories/all');
+    const sel = document.getElementById('filter-cat');
+    sel.innerHTML = '<option value="">Все</option>';
+    r.categories.forEach(c => { const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
+  } catch(e){}
+}
+async function loadProducts() {
+  const grid = document.getElementById('products-grid');
+  grid.innerHTML = '<div class="loading">Загрузка...</div>';
+  const cat = document.getElementById('filter-cat').value;
+  const min = document.getElementById('filter-min').value;
+  const max = document.getElementById('filter-max').value;
+  let qs = '';
+  if (cat) qs += '&category='+encodeURIComponent(cat);
+  if (min) qs += '&min_price='+min;
+  if (max) qs += '&max_price='+max;
+  try {
+    const r = await api('/products/?'+(qs.startsWith('&')?qs.slice(1):qs));
+    if (!r.items.length) { grid.innerHTML = '<div class="empty"><div class="empty-icon">📦</div><div class="empty-title">Товары не найдены</div><div class="empty-sub">Попробуй изменить фильтры</div></div>'; return; }
+    grid.innerHTML = r.items.map(p=>`
+      <div class="card">
+        <div class="product-img">${catEmoji[p.category]||catEmoji.default}</div>
+        <div class="product-cat">${p.category}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-desc">${p.description||'Нет описания'}</div>
+        <div class="product-footer">
+          <div>
+            <div class="product-price">$${p.price}</div>
+            <div class="product-stock">На складе: ${p.stock} шт.</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-outline btn-sm" onclick="deleteProduct('${p.id}')">🗑</button>
+          </div>
+        </div>
+      </div>`).join('');
+  } catch(e) { grid.innerHTML = '<div class="empty"><div class="empty-title">Ошибка загрузки</div></div>'; }
+}
+function openProductModal() { openModal('modal-product'); }
+async function createProduct() {
+  const body = { name: document.getElementById('p-name').value, category: document.getElementById('p-cat').value, price: parseFloat(document.getElementById('p-price').value)||0, stock: parseInt(document.getElementById('p-stock').value)||0, description: document.getElementById('p-desc').value };
+  if (!body.name || !body.category) { toast('Заполни название и категорию', 'error'); return; }
+  try {
+    await api('/products/', {method:'POST', body:JSON.stringify(body)});
+    closeModal('modal-product');
+    toast('Товар добавлен!');
+    loadProducts(); loadCategories();
+  } catch(e) { toast(e.detail||'Ошибка', 'error'); }
+}
+async function deleteProduct(id) {
+  if (!confirm('Удалить товар?')) return;
+  try { await api('/products/'+id, {method:'DELETE'}); toast('Товар удалён'); loadProducts(); }
+  catch(e) { toast(e.detail||'Ошибка', 'error'); }
+}
+
+// BLOG
+async function loadPosts() {
+  const grid = document.getElementById('posts-grid');
+  grid.innerHTML = '<div class="loading">Загрузка...</div>';
+  try {
+    const r = await api('/posts/');
+    allPosts = r.items;
+    renderPosts(allPosts);
+  } catch(e) { grid.innerHTML = '<div class="empty"><div class="empty-title">Ошибка загрузки</div></div>'; }
+}
+function renderPosts(posts) {
+  const grid = document.getElementById('posts-grid');
+  if (!posts.length) { grid.innerHTML = '<div class="empty"><div class="empty-icon">📝</div><div class="empty-title">Нет постов</div></div>'; return; }
+  grid.innerHTML = posts.map(p=>`
+    <div class="card">
+      <div class="post-title" onclick="openPost('${p.id}')">${p.title}</div>
+      <div class="post-body">${p.body}</div>
+      <div class="post-meta">
+        <span class="comment-count">💬 ${p.comments_count||0} комм.</span>
+        ${(p.tags||[]).map(t=>`<span class="tag">#${t}</span>`).join('')}
+        <span style="margin-left:auto;display:flex;gap:6px">
+          <button class="btn btn-red btn-sm" onclick="deletePost('${p.id}',event)">🗑</button>
+        </span>
+      </div>
+    </div>`).join('');
+}
+function filterPosts() {
+  const tag = document.getElementById('filter-tag').value.toLowerCase().trim();
+  const filtered = tag ? allPosts.filter(p=>(p.tags||[]).some(t=>t.toLowerCase().includes(tag))||p.title.toLowerCase().includes(tag)) : allPosts;
+  renderPosts(filtered);
+}
+async function openPost(id) {
+  currentPostId = id;
+  document.getElementById('blog-list-view').style.display = 'none';
+  document.getElementById('blog-detail-view').style.display = 'block';
+  const content = document.getElementById('blog-detail-content');
+  content.innerHTML = '<div class="loading">Загрузка...</div>';
+  try {
+    const [post, comms] = await Promise.all([api('/posts/'+id), api('/posts/'+id+'/comments')]);
+    content.innerHTML = `
+      <div class="post-detail-title">${post.title}</div>
+      <div class="post-meta" style="margin-bottom:12px">${(post.tags||[]).map(t=>`<span class="tag">#${t}</span>`).join('')}</div>
+      <div class="post-detail-body">${post.body}</div>
+      <div class="divider"></div>
+      <div class="section-title">Комментарии (${comms.count})</div>
+      <div id="comments-list">
+        ${comms.items.map(c=>`<div class="comment-item"><div class="comment-author">Пользователь · ${new Date(c.created_at).toLocaleDateString()}</div>${c.body}</div>`).join('')}
+      </div>
+      <button class="btn btn-teal btn-sm" style="margin-top:12px" onclick="openModal('modal-comment')">+ Добавить комментарий</button>`;
+  } catch(e) { content.innerHTML = '<div class="empty"><div class="empty-title">Ошибка загрузки поста</div></div>'; }
+}
+function closeBlogDetail() {
+  document.getElementById('blog-list-view').style.display = 'block';
+  document.getElementById('blog-detail-view').style.display = 'none';
+  currentPostId = null;
+}
+function openPostModal() { openModal('modal-post'); }
+async function createPost() {
+  const title = document.getElementById('post-title-inp').value.trim();
+  const body = document.getElementById('post-body-inp').value.trim();
+  const tags = document.getElementById('post-tags-inp').value.split(',').map(t=>t.trim()).filter(Boolean);
+  if (!title || !body) { toast('Заполни заголовок и текст', 'error'); return; }
+  try {
+    await api('/posts/', {method:'POST', body:JSON.stringify({title,body,tags})});
+    closeModal('modal-post');
+    toast('Пост опубликован!');
+    loadPosts();
+  } catch(e) { toast(e.detail||'Ошибка', 'error'); }
+}
+async function deletePost(id, ev) {
+  ev.stopPropagation();
+  if (!confirm('Удалить пост и все его комментарии?')) return;
+  try { await api('/posts/'+id, {method:'DELETE'}); toast('Пост удалён'); loadPosts(); }
+  catch(e) { toast(e.detail||'Нет прав на удаление', 'error'); }
+}
+async function submitComment() {
+  const body = document.getElementById('comment-text').value.trim();
+  if (!body) { toast('Напиши комментарий', 'error'); return; }
+  try {
+    await api('/posts/'+currentPostId+'/comments', {method:'POST', body:JSON.stringify({body})});
+    closeModal('modal-comment');
+    document.getElementById('comment-text').value = '';
+    toast('Комментарий добавлен!');
+    openPost(currentPostId);
+  } catch(e) { toast(e.detail||'Ошибка', 'error'); }
+}
+
+// TASKS
+async function loadTasks() {
+  const list = document.getElementById('tasks-list');
+  list.innerHTML = '<div class="loading">Загрузка...</div>';
+  const status = document.getElementById('filter-status').value;
+  const priority = document.getElementById('filter-priority').value;
+  let qs = '';
+  if (status) qs += '&status='+status;
+  if (priority) qs += '&priority='+priority;
+  try {
+    const r = await api('/tasks/?'+(qs.startsWith('&')?qs.slice(1):qs));
+    if (!r.items.length) { list.innerHTML = '<div class="empty"><div class="empty-icon">✅</div><div class="empty-title">Нет задач</div></div>'; return; }
+    list.innerHTML = r.items.map(t=>`
+      <div class="task-row">
+        <div class="task-title-wrap">
+          <div class="task-title">${t.title}</div>
+          ${t.description?`<div class="task-desc">${t.description}</div>`:''}
+        </div>
+        <span class="badge badge-${t.priority}">${t.priority}</span>
+        <select class="filter-input" style="font-size:12px;padding:4px 8px;width:120px" onchange="changeTaskStatus('${t.id}',this.value)">
+          <option value="todo" ${t.status==='todo'?'selected':''}>Todo</option>
+          <option value="in_progress" ${t.status==='in_progress'?'selected':''}>In Progress</option>
+          <option value="done" ${t.status==='done'?'selected':''}>Done</option>
+        </select>
+        <button class="btn btn-red btn-sm" onclick="deleteTask('${t.id}')">🗑</button>
+      </div>`).join('');
+  } catch(e) { list.innerHTML = '<div class="empty"><div class="empty-title">Ошибка загрузки</div></div>'; }
+}
+function openTaskModal() { openModal('modal-task'); }
+async function createTask() {
+  const title = document.getElementById('t-title').value.trim();
+  if (!title) { toast('Введи название задачи', 'error'); return; }
+  const body = { title, description: document.getElementById('t-desc').value, priority: document.getElementById('t-priority').value, status: document.getElementById('t-status').value, due_date: document.getElementById('t-due').value||null };
+  try {
+    await api('/tasks/', {method:'POST', body:JSON.stringify(body)});
+    closeModal('modal-task');
+    toast('Задача создана!');
+    loadTasks();
+  } catch(e) { toast(e.detail||'Ошибка', 'error'); }
+}
+async function changeTaskStatus(id, status) {
+  try {
+    await api(`/tasks/${id}/status?new_status=${status}`, {method:'PATCH'});
+    toast('Статус обновлён');
+  } catch(e) { toast(e.detail||'Ошибка', 'error'); loadTasks(); }
+}
+async function deleteTask(id) {
+  if (!confirm('Удалить задачу?')) return;
+  try { await api('/tasks/'+id, {method:'DELETE'}); toast('Задача удалена'); loadTasks(); }
+  catch(e) { toast(e.detail||'Ошибка', 'error'); }
+}
+
+// PAYMENTS
+async function loadPaymentStats() {
+  try {
+    const s = await api('/payments/stats/summary');
+    document.getElementById('payment-stats').innerHTML = `
+      <div class="stat-card"><div class="stat-val">${s.total_transactions}</div><div class="stat-label">Всего транзакций</div></div>
+      <div class="stat-card"><div class="stat-val">$${(s.total_volume||0).toFixed(2)}</div><div class="stat-label">Общий объём</div></div>
+      <div class="stat-card"><div class="stat-val">$${(s.by_status?.completed||0).toFixed(2)}</div><div class="stat-label">Завершено</div></div>
+      <div class="stat-card"><div class="stat-val">$${(s.by_status?.refunded||0).toFixed(2)}</div><div class="stat-label">Возврачено</div></div>`;
+  } catch(e){}
+}
+async function loadPayments() {
+  const list = document.getElementById('payments-list');
+  list.innerHTML = '<div class="loading">Загрузка...</div>';
+  const status = document.getElementById('filter-pay-status').value;
+  try {
+    const r = await api('/payments/'+(status?'?status='+status:''));
+    if (!r.items.length) { list.innerHTML = '<div class="empty"><div class="empty-icon">💳</div><div class="empty-title">Нет платежей</div></div>'; return; }
+    list.innerHTML = r.items.map(p=>{
+      const isOut = p.from_user_id === currentUser?.id;
+      return `<div class="payment-row">
+        <div class="payment-icon" style="background:${isOut?'rgba(239,68,68,.12)':'rgba(34,197,94,.12)'}">${isOut?'↑':'↓'}</div>
+        <div class="payment-info">
+          <div class="payment-desc">${p.description||'Платёж'}</div>
+          <div class="payment-meta">${p.currency} · ${new Date(p.created_at).toLocaleDateString()}</div>
+        </div>
+        <span class="badge badge-${p.status}">${p.status}</span>
+        <span class="payment-amount ${isOut?'amount-out':'amount-in'}">${isOut?'-':'+'} $${p.amount}</span>
+        ${p.status==='completed'?`<button class="btn btn-outline btn-sm" onclick="refundPayment('${p.id}')">Возврат</button>`:''}
+      </div>`;
+    }).join('');
+  } catch(e) { list.innerHTML = '<div class="empty"><div class="empty-title">Ошибка загрузки</div></div>'; }
+}
+function openPaymentModal() { openModal('modal-payment'); }
+async function createPayment() {
+  const to = document.getElementById('pay-to').value.trim();
+  const amount = parseFloat(document.getElementById('pay-amount').value);
+  const desc = document.getElementById('pay-desc').value;
+  if (!to || !amount) { toast('Заполни получателя и сумму', 'error'); return; }
+  try {
+    await api('/payments/', {method:'POST', body:JSON.stringify({to_user_id:to, amount, description:desc})});
+    closeModal('modal-payment');
+    toast('Платёж отправлен!');
+    loadPayments(); loadPaymentStats();
+  } catch(e) { toast(e.detail||'Ошибка', 'error'); }
+}
+async function refundPayment(id) {
+  if (!confirm('Сделать возврат этого платежа?')) return;
+  try {
+    await api('/payments/'+id+'/refund', {method:'PATCH'});
+    toast('Возврат выполнен');
+    loadPayments(); loadPaymentStats();
+  } catch(e) { toast(e.detail||'Ошибка', 'error'); }
+}
+
+// PROFILE
+async function loadProfile() {
+  try {
+    const u = await api('/users/me');
+    currentUser = u;
+    document.getElementById('profile-content').innerHTML = `
+      <div class="profile-avatar">${u.username[0].toUpperCase()}</div>
+      <div class="profile-name">${u.username}</div>
+      <div class="profile-email">${u.email}</div>
+      <div class="divider"></div>
+      <div class="profile-row"><span class="profile-key">ID</span><span style="font-family:monospace;font-size:12px;color:var(--text2)">${u.id}</span></div>
+      <div class="profile-row"><span class="profile-key">Роль</span><span class="badge ${u.role==='admin'?'badge-high':'badge-todo'}">${u.role}</span></div>
+      <div class="profile-row"><span class="profile-key">Дата регистрации</span><span>${new Date(u.created_at).toLocaleDateString()}</span></div>
+      <div class="divider"></div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:12px">Чтобы отправить платёж другому пользователю — скопируй его ID отсюда:</div>
+      <div style="font-family:monospace;font-size:12px;background:var(--bg3);padding:10px;border-radius:7px;color:var(--teal3);word-break:break-all">${u.id}</div>`;
+  } catch(e) { document.getElementById('profile-content').innerHTML = '<div class="empty"><div class="empty-title">Ошибка загрузки профиля</div></div>'; }
+}
+
+// CLOSE modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', e => { if(e.target===o) o.classList.remove('show'); }));
+// ENTER to login
+document.getElementById('login-password').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+</script>
+</body>
+</html>
