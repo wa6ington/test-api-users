@@ -1,173 +1,226 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QA TestZone — Practice Site</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QA TestZone</title>
 <style>
-  :root {
-    --bg: #0f172a; --bg2: #1e293b; --bg3: #253347;
-    --teal: #0d9488; --teal2: #14b8a6; --teal3: #5eead4;
-    --text: #f1f5f9; --text2: #94a3b8; --text3: #64748b;
-    --border: #2a3f55; --border2: #334d63;
-    --green: #22c55e; --red: #ef4444; --yellow: #f59e0b; --blue: #3b82f6; --purple: #8b5cf6;
-    --radius: 10px; --card: #1e293b;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+:root[data-theme="dark"]{
+  --bg:#0f172a;--bg2:#1e293b;--bg3:#253347;--bg4:#2a3f55;
+  --teal:#0d9488;--teal2:#14b8a6;--teal3:#5eead4;
+  --text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;
+  --border:#2a3f55;--border2:#334d63;
+  --green:#22c55e;--red:#ef4444;--yellow:#f59e0b;--blue:#3b82f6;--purple:#8b5cf6;
+  --card:#1e293b;--shadow:rgba(0,0,0,.4);
+}
+:root[data-theme="light"]{
+  --bg:#f8fafc;--bg2:#ffffff;--bg3:#f1f5f9;--bg4:#e2e8f0;
+  --teal:#0d9488;--teal2:#0f766e;--teal3:#0d9488;
+  --text:#0f172a;--text2:#475569;--text3:#94a3b8;
+  --border:#e2e8f0;--border2:#cbd5e1;
+  --green:#16a34a;--red:#dc2626;--yellow:#d97706;--blue:#2563eb;--purple:#7c3aed;
+  --card:#ffffff;--shadow:rgba(0,0,0,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;transition:background-color .2s,color .2s,border-color .2s}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 
-  /* NAV */
-  nav { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; height: 56px; gap: 0; position: sticky; top: 0; z-index: 100; }
-  .nav-logo { font-size: 16px; font-weight: 700; color: var(--teal2); margin-right: 32px; cursor: pointer; letter-spacing: -.3px; }
-  .nav-logo span { color: var(--text2); font-weight: 400; }
-  .nav-links { display: flex; gap: 4px; flex: 1; }
-  .nav-link { padding: 6px 14px; border-radius: 6px; font-size: 13px; color: var(--text2); cursor: pointer; transition: all .15s; border: none; background: none; }
-  .nav-link:hover { background: var(--bg3); color: var(--text); }
-  .nav-link.active { background: rgba(13,148,136,.15); color: var(--teal2); }
-  .nav-right { display: flex; align-items: center; gap: 10px; }
-  .nav-user { font-size: 13px; color: var(--text2); }
-  .btn { padding: 7px 16px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: all .15s; }
-  .btn-teal { background: var(--teal); color: #fff; }
-  .btn-teal:hover { background: var(--teal2); }
-  .btn-outline { background: transparent; border: 1px solid var(--border2); color: var(--text2); }
-  .btn-outline:hover { border-color: var(--teal); color: var(--teal2); }
-  .btn-red { background: rgba(239,68,68,.15); color: var(--red); border: 1px solid rgba(239,68,68,.3); }
-  .btn-red:hover { background: rgba(239,68,68,.25); }
-  .btn-sm { padding: 4px 10px; font-size: 12px; }
-  .btn:disabled { opacity: .5; cursor: not-allowed; }
+/* NAV */
+nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;height:54px;gap:4px;position:sticky;top:0;z-index:100;box-shadow:0 1px 8px var(--shadow)}
+.nav-logo{font-size:15px;font-weight:700;color:var(--teal2);margin-right:16px;cursor:pointer;white-space:nowrap}
+.nav-logo span{color:var(--text2);font-weight:400}
+.nav-links{display:flex;gap:2px;flex:1;flex-wrap:wrap}
+.nav-link{padding:5px 11px;border-radius:6px;font-size:12.5px;color:var(--text2);cursor:pointer;transition:all .15s;border:none;background:none}
+.nav-link:hover{background:var(--bg3);color:var(--text)}
+.nav-link.active{background:rgba(13,148,136,.15);color:var(--teal2)}
+.nav-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.nav-user{font-size:12px;color:var(--text2);white-space:nowrap}
+.nav-badge{position:relative;display:inline-flex}
+.notif-dot{position:absolute;top:-2px;right:-2px;width:8px;height:8px;background:var(--red);border-radius:50%;display:none}
+.notif-dot.show{display:block}
+.btn{padding:6px 14px;border-radius:7px;font-size:12.5px;font-weight:500;cursor:pointer;border:none;transition:all .15s}
+.btn-teal{background:var(--teal);color:#fff}.btn-teal:hover{opacity:.9}
+.btn-outline{background:transparent;border:1px solid var(--border2);color:var(--text2)}.btn-outline:hover{border-color:var(--teal);color:var(--teal2)}
+.btn-red{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.25)}.btn-red:hover{background:rgba(239,68,68,.22)}
+.btn-ghost{background:transparent;border:none;color:var(--text2);cursor:pointer;padding:5px 8px;border-radius:6px}.btn-ghost:hover{background:var(--bg3);color:var(--text)}
+.btn-sm{padding:4px 10px;font-size:11.5px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
 
-  /* PAGES */
-  .page { display: none; max-width: 1100px; margin: 0 auto; padding: 28px 24px; }
-  .page.active { display: block; }
+/* PAGES */
+.page{display:none;max-width:1100px;margin:0 auto;padding:24px 20px}
+.page.active{display:block}
 
-  /* AUTH PAGE */
-  .auth-wrap { min-height: calc(100vh - 56px); display: flex; align-items: center; justify-content: center; }
-  .auth-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 36px; width: 360px; }
-  .auth-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
-  .auth-sub { font-size: 13px; color: var(--text2); margin-bottom: 24px; }
-  .auth-tabs { display: flex; gap: 4px; margin-bottom: 20px; background: var(--bg3); border-radius: 8px; padding: 4px; }
-  .auth-tab { flex: 1; text-align: center; padding: 7px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text2); transition: all .15s; }
-  .auth-tab.active { background: var(--teal); color: #fff; font-weight: 500; }
-  .form-group { margin-bottom: 14px; }
-  .form-label { font-size: 12px; color: var(--text2); margin-bottom: 5px; display: block; font-weight: 500; }
-  .form-input { width: 100%; background: var(--bg3); border: 1px solid var(--border2); border-radius: 7px; padding: 9px 12px; color: var(--text); font-size: 13px; transition: border-color .15s; outline: none; }
-  .form-input:focus { border-color: var(--teal); }
-  .form-error { font-size: 12px; color: var(--red); margin-top: 12px; display: none; }
-  .form-error.show { display: block; }
-  .test-hint { font-size: 11px; color: var(--text3); margin-top: 8px; text-align: center; }
-  .test-hint b { color: var(--teal3); }
+/* AUTH */
+.auth-wrap{min-height:calc(100vh - 54px);display:flex;align-items:center;justify-content:center}
+.auth-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:32px;width:360px}
+.auth-title{font-size:20px;font-weight:700;margin-bottom:4px}
+.auth-sub{font-size:12.5px;color:var(--text2);margin-bottom:20px}
+.auth-tabs{display:flex;gap:4px;margin-bottom:18px;background:var(--bg3);border-radius:8px;padding:3px}
+.auth-tab{flex:1;text-align:center;padding:6px;border-radius:6px;font-size:12.5px;cursor:pointer;color:var(--text2);transition:all .15s}
+.auth-tab.active{background:var(--teal);color:#fff;font-weight:500}
+.form-group{margin-bottom:12px}
+.form-label{font-size:11.5px;color:var(--text2);margin-bottom:4px;display:flex;justify-content:space-between}
+.form-input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:8px 11px;color:var(--text);font-size:13px;transition:border-color .15s;outline:none}
+.form-input:focus{border-color:var(--teal)}
+.form-input.error{border-color:var(--red)}
+.field-error{font-size:11px;color:var(--red);margin-top:3px;display:none}
+.field-error.show{display:block}
+.form-error{font-size:12px;color:var(--red);margin-top:10px;display:none;padding:8px;background:rgba(239,68,68,.08);border-radius:6px}
+.form-error.show{display:block}
+.test-hint{font-size:11px;color:var(--text3);margin-top:8px;text-align:center}
+.test-hint b{color:var(--teal3)}
 
-  /* CARDS GRID */
-  .page-title { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
-  .page-sub { font-size: 13px; color: var(--text2); margin-bottom: 20px; }
-  .grid { display: grid; gap: 16px; }
-  .grid-3 { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
-  .grid-2 { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
-  .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; transition: border-color .15s; }
-  .card:hover { border-color: var(--border2); }
+/* LAYOUT */
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap}
+.page-title{font-size:20px;font-weight:700}
+.page-sub{font-size:12.5px;color:var(--text2);margin-top:3px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.filter-input{background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:6px 11px;color:var(--text);font-size:12.5px;outline:none}
+.filter-input:focus{border-color:var(--teal)}
+.action-bar{display:flex;gap:8px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
 
-  /* PRODUCT CARD */
-  .product-img { height: 100px; background: var(--bg3); border-radius: 7px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; font-size: 32px; }
-  .product-name { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
-  .product-cat { font-size: 11px; color: var(--teal2); background: rgba(13,148,136,.1); padding: 2px 7px; border-radius: 4px; display: inline-block; margin-bottom: 8px; }
-  .product-desc { font-size: 12px; color: var(--text2); margin-bottom: 12px; min-height: 32px; }
-  .product-footer { display: flex; align-items: center; justify-content: space-between; }
-  .product-price { font-size: 18px; font-weight: 700; color: var(--teal2); }
-  .product-stock { font-size: 11px; color: var(--text3); }
+/* CARDS */
+.grid{display:grid;gap:14px}
+.grid-3{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.grid-2{grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;transition:border-color .15s,box-shadow .15s}
+.card:hover{border-color:var(--border2);box-shadow:0 4px 16px var(--shadow)}
 
-  /* FILTERS */
-  .filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
-  .filter-input { background: var(--bg2); border: 1px solid var(--border); border-radius: 7px; padding: 7px 12px; color: var(--text); font-size: 13px; outline: none; }
-  .filter-input:focus { border-color: var(--teal); }
-  .filter-label { font-size: 12px; color: var(--text2); }
+/* PRODUCT */
+.product-img{height:90px;background:var(--bg3);border-radius:7px;margin-bottom:10px;display:flex;align-items:center;justify-content:center;font-size:30px}
+.product-name{font-size:14px;font-weight:600;margin-bottom:4px}
+.product-cat{font-size:10.5px;color:var(--teal2);background:rgba(13,148,136,.1);padding:2px 6px;border-radius:4px;display:inline-block;margin-bottom:6px}
+.product-desc{font-size:11.5px;color:var(--text2);margin-bottom:10px;min-height:28px}
+.product-footer{display:flex;align-items:center;justify-content:space-between}
+.product-price{font-size:17px;font-weight:700;color:var(--teal2)}
+.product-stock{font-size:10.5px;color:var(--text3)}
+.cart-qty{display:flex;align-items:center;gap:6px;margin-top:8px}
+.qty-btn{width:24px;height:24px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center}
+.qty-btn:hover{background:var(--bg4)}
 
-  /* POST CARD */
-  .post-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; cursor: pointer; }
-  .post-title:hover { color: var(--teal2); }
-  .post-body { font-size: 13px; color: var(--text2); margin-bottom: 10px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-  .post-meta { display: flex; align-items: center; gap: 10px; font-size: 11px; color: var(--text3); }
-  .tag { font-size: 10px; color: var(--teal3); background: rgba(94,234,212,.08); padding: 2px 6px; border-radius: 4px; }
-  .comment-count { color: var(--blue); }
+/* SEARCH */
+.search-wrap{position:relative;flex:1;max-width:300px}
+.search-input{width:100%;padding-left:32px}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:13px;pointer-events:none}
 
-  /* TASKS */
-  .task-row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; transition: border-color .15s; }
-  .task-row:hover { border-color: var(--border2); }
-  .task-title-wrap { flex: 1; }
-  .task-title { font-size: 14px; font-weight: 500; }
-  .task-desc { font-size: 12px; color: var(--text2); margin-top: 2px; }
-  .badge { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 4px; white-space: nowrap; }
-  .badge-todo { background: rgba(148,163,184,.15); color: var(--text2); }
-  .badge-inprogress { background: rgba(59,130,246,.15); color: var(--blue); }
-  .badge-done { background: rgba(34,197,94,.12); color: var(--green); }
-  .badge-high { background: rgba(239,68,68,.12); color: var(--red); }
-  .badge-medium { background: rgba(245,158,11,.12); color: var(--yellow); }
-  .badge-low { background: rgba(148,163,184,.12); color: var(--text2); }
+/* BADGES */
+.badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;white-space:nowrap}
+.badge-todo{background:rgba(148,163,184,.12);color:var(--text2)}
+.badge-in_progress,.badge-inprogress{background:rgba(59,130,246,.12);color:var(--blue)}
+.badge-done{background:rgba(34,197,94,.1);color:var(--green)}
+.badge-high{background:rgba(239,68,68,.1);color:var(--red)}
+.badge-medium{background:rgba(245,158,11,.1);color:var(--yellow)}
+.badge-low{background:rgba(148,163,184,.1);color:var(--text2)}
+.badge-admin{background:rgba(139,92,246,.12);color:var(--purple)}
+.badge-user{background:rgba(148,163,184,.1);color:var(--text2)}
+.badge-completed{background:rgba(34,197,94,.1);color:var(--green)}
+.badge-refunded{background:rgba(245,158,11,.1);color:var(--yellow)}
+.role-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px}
 
-  /* PAYMENTS */
-  .payment-row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; }
-  .payment-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-  .payment-info { flex: 1; }
-  .payment-desc { font-size: 14px; font-weight: 500; }
-  .payment-meta { font-size: 11px; color: var(--text3); margin-top: 2px; }
-  .payment-amount { font-size: 16px; font-weight: 700; }
-  .amount-out { color: var(--red); }
-  .amount-in { color: var(--green); }
-  .badge-completed { background: rgba(34,197,94,.12); color: var(--green); }
-  .badge-refunded { background: rgba(245,158,11,.12); color: var(--yellow); }
+/* POST */
+.post-title{font-size:14px;font-weight:600;margin-bottom:5px;cursor:pointer}
+.post-title:hover{color:var(--teal2)}
+.post-body-preview{font-size:12.5px;color:var(--text2);margin-bottom:8px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.post-meta{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text3);flex-wrap:wrap}
+.tag{font-size:10px;color:var(--teal3);background:rgba(94,234,212,.07);padding:2px 5px;border-radius:4px;cursor:pointer}
+.tag:hover{background:rgba(94,234,212,.15)}
+.like-btn{display:flex;align-items:center;gap:4px;cursor:pointer;color:var(--text3);font-size:11px;background:none;border:none;padding:2px 6px;border-radius:5px;transition:all .15s}
+.like-btn:hover,.like-btn.liked{color:var(--red)}
+.like-btn.liked{background:rgba(239,68,68,.08)}
 
-  /* MODAL */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 200; display: none; align-items: center; justify-content: center; }
-  .modal-overlay.show { display: flex; }
-  .modal { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 28px; width: 480px; max-width: 95vw; max-height: 85vh; overflow-y: auto; }
-  .modal-title { font-size: 17px; font-weight: 700; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
-  .modal-close { cursor: pointer; color: var(--text3); font-size: 20px; line-height: 1; background: none; border: none; color: var(--text2); }
-  .modal-close:hover { color: var(--text); }
+/* TASK */
+.task-row{display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:7px;transition:border-color .15s}
+.task-row:hover{border-color:var(--border2)}
+.task-title-wrap{flex:1;min-width:0}
+.task-title{font-size:13.5px;font-weight:500}
+.task-desc{font-size:11.5px;color:var(--text2);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-  /* TOAST */
-  .toast-wrap { position: fixed; bottom: 24px; right: 24px; z-index: 300; display: flex; flex-direction: column; gap: 8px; }
-  .toast { padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; animation: slideIn .2s ease; max-width: 320px; }
-  .toast-success { background: rgba(34,197,94,.15); border: 1px solid rgba(34,197,94,.3); color: var(--green); }
-  .toast-error { background: rgba(239,68,68,.15); border: 1px solid rgba(239,68,68,.3); color: var(--red); }
-  .toast-info { background: rgba(59,130,246,.15); border: 1px solid rgba(59,130,246,.3); color: var(--blue); }
-  @keyframes slideIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+/* PAYMENTS */
+.payment-row{display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:7px}
+.payment-icon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.payment-info{flex:1;min-width:0}
+.payment-desc{font-size:13.5px;font-weight:500}
+.payment-meta{font-size:11px;color:var(--text3);margin-top:2px}
+.payment-amount{font-size:15px;font-weight:700;white-space:nowrap}
+.amount-out{color:var(--red)}.amount-in{color:var(--green)}
 
-  /* PROFILE */
-  .profile-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 28px; }
-  .profile-avatar { width: 72px; height: 72px; border-radius: 50%; background: rgba(13,148,136,.2); display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 700; color: var(--teal2); margin-bottom: 14px; }
-  .profile-name { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
-  .profile-email { font-size: 13px; color: var(--text2); margin-bottom: 16px; }
-  .profile-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
-  .profile-row:last-child { border-bottom: none; }
-  .profile-key { color: var(--text2); }
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:20px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:13px 15px}
+.stat-val{font-size:22px;font-weight:700;color:var(--teal2)}
+.stat-label{font-size:11.5px;color:var(--text2);margin-top:2px}
 
-  /* STATS ROW */
-  .stats-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-bottom: 24px; }
-  .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
-  .stat-val { font-size: 24px; font-weight: 700; color: var(--teal2); }
-  .stat-label { font-size: 12px; color: var(--text2); margin-top: 2px; }
+/* CART */
+.cart-icon-wrap{position:relative;cursor:pointer}
+.cart-count{position:absolute;top:-6px;right:-6px;background:var(--red);color:#fff;font-size:9px;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.cart-item-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.cart-item-name{flex:1;font-size:13px;font-weight:500}
+.cart-total{font-size:16px;font-weight:700;color:var(--teal2);margin:14px 0}
+.order-form{background:var(--bg3);border-radius:8px;padding:14px;margin-top:14px}
 
-  /* EMPTY STATE */
-  .empty { text-align: center; padding: 48px 24px; }
-  .empty-icon { font-size: 40px; margin-bottom: 12px; }
-  .empty-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
-  .empty-sub { font-size: 13px; color: var(--text2); }
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.show{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px;width:460px;max-width:100%;max-height:85vh;overflow-y:auto}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
+.modal-close{cursor:pointer;background:none;border:none;color:var(--text2);font-size:18px;line-height:1}
+.modal-close:hover{color:var(--text)}
+.form-row{margin-bottom:11px}
+select.form-input{cursor:pointer}
 
-  /* LOADING */
-  .loading { text-align: center; padding: 40px; color: var(--text2); font-size: 14px; }
+/* NOTIFICATIONS PANEL */
+.notif-panel{position:fixed;top:60px;right:16px;width:300px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;z-index:150;box-shadow:0 8px 32px var(--shadow);display:none;max-height:400px;overflow-y:auto}
+.notif-panel.show{display:block}
+.notif-header{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600}
+.notif-item{padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px}
+.notif-item.unread{background:rgba(13,148,136,.05)}
+.notif-msg{color:var(--text)}
+.notif-time{color:var(--text3);font-size:10.5px;margin-top:2px}
+.notif-empty{padding:20px;text-align:center;color:var(--text3);font-size:12.5px}
 
-  /* POST DETAIL */
-  .post-detail-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
-  .post-detail-body { font-size: 14px; color: var(--text2); line-height: 1.7; margin-bottom: 24px; }
-  .comment-item { background: var(--bg3); border-radius: 8px; padding: 12px; margin-bottom: 8px; font-size: 13px; }
-  .comment-item .comment-author { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
+/* ADMIN */
+.user-row{display:flex;align-items:center;gap:10px;padding:10px 13px;background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:7px}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:rgba(13,148,136,.15);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--teal2);flex-shrink:0}
+.user-info{flex:1;min-width:0}
+.user-name{font-size:13px;font-weight:500}
+.user-email{font-size:11px;color:var(--text3)}
 
-  /* FORM MODAL */
-  .form-row { margin-bottom: 12px; }
-  select.form-input { cursor: pointer; }
+/* POST DETAIL */
+.post-detail-title{font-size:20px;font-weight:700;margin-bottom:6px}
+.post-detail-body{font-size:13.5px;color:var(--text2);line-height:1.7;margin-bottom:20px}
+.comment-item{background:var(--bg3);border-radius:8px;padding:10px;margin-bottom:7px;font-size:12.5px}
+.comment-author{font-size:11px;color:var(--text3);margin-bottom:3px}
 
-  .divider { height: 1px; background: var(--border); margin: 16px 0; }
-  .section-title { font-size: 13px; font-weight: 600; color: var(--text2); margin-bottom: 12px; text-transform: uppercase; letter-spacing: .05em; }
-  .action-bar { display: flex; gap: 8px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
+/* SEARCH RESULTS */
+.search-section{margin-bottom:20px}
+.search-section-title{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em}
+.search-result-item{padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;cursor:pointer;transition:border-color .15s}
+.search-result-item:hover{border-color:var(--teal)}
+
+/* MISC */
+.divider{height:1px;background:var(--border);margin:14px 0}
+.empty{text-align:center;padding:40px 20px;color:var(--text3)}
+.empty-icon{font-size:36px;margin-bottom:10px}
+.empty-title{font-size:15px;font-weight:600;color:var(--text2);margin-bottom:4px}
+.loading{text-align:center;padding:32px;color:var(--text3);font-size:13px}
+.profile-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px}
+.profile-avatar{width:68px;height:68px;border-radius:50%;background:rgba(13,148,136,.15);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:var(--teal2);margin-bottom:12px}
+.profile-name{font-size:18px;font-weight:700;margin-bottom:2px}
+.profile-email{font-size:12.5px;color:var(--text2);margin-bottom:14px}
+.profile-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
+.profile-row:last-child{border-bottom:none}
+.profile-key{color:var(--text2)}
+.pagination{display:flex;gap:6px;align-items:center;margin-top:16px;justify-content:center}
+.page-btn{padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--text2);cursor:pointer;font-size:12px}
+.page-btn:hover{border-color:var(--teal);color:var(--teal2)}
+.page-btn.active{background:var(--teal);color:#fff;border-color:var(--teal)}
+.page-btn:disabled{opacity:.4;cursor:not-allowed}
+.toast-wrap{position:fixed;bottom:20px;right:20px;z-index:300;display:flex;flex-direction:column;gap:7px}
+.toast{padding:9px 14px;border-radius:8px;font-size:12.5px;font-weight:500;animation:slideIn .2s ease;max-width:300px}
+.toast-success{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);color:var(--green)}
+.toast-error{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);color:var(--red)}
+.toast-info{background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.25);color:var(--blue)}
+@keyframes slideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.theme-toggle{width:32px;height:32px;border-radius:7px;background:var(--bg3);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px}
 </style>
 </head>
 <body>
@@ -175,39 +228,78 @@
 <nav>
   <div class="nav-logo" onclick="goHome()">QA<span>TestZone</span></div>
   <div class="nav-links">
-    <button class="nav-link" onclick="showPage('shop')">Магазин</button>
-    <button class="nav-link" onclick="showPage('blog')">Блог</button>
-    <button class="nav-link" onclick="showPage('tasks')">Задачи</button>
-    <button class="nav-link" onclick="showPage('payments')">Платежи</button>
-    <button class="nav-link" onclick="showPage('profile')">Профиль</button>
+    <button class="nav-link" onclick="showPage('shop')">🛍 Магазин</button>
+    <button class="nav-link" onclick="showPage('blog')">📝 Блог</button>
+    <button class="nav-link" onclick="showPage('tasks')">✅ Задачи</button>
+    <button class="nav-link" onclick="showPage('payments')">💳 Платежи</button>
+    <button class="nav-link" onclick="showPage('search-page')">🔍 Поиск</button>
+    <button class="nav-link" id="admin-link" onclick="showPage('admin')" style="display:none">👑 Админ</button>
   </div>
   <div class="nav-right">
+    <div class="search-wrap" style="max-width:180px">
+      <span class="search-icon">🔍</span>
+      <input class="form-input search-input" id="quick-search" placeholder="Поиск..." onkeydown="if(event.key==='Enter')doQuickSearch()">
+    </div>
+    <div class="nav-badge" onclick="toggleNotifPanel()">
+      <button class="btn-ghost" title="Уведомления" style="font-size:16px">🔔</button>
+      <span class="notif-dot" id="notif-dot"></span>
+    </div>
+    <div class="cart-icon-wrap" onclick="showPage('cart')">
+      <button class="btn-ghost" style="font-size:16px">🛒</button>
+      <span class="cart-count" id="cart-count" style="display:none">0</span>
+    </div>
+    <button class="btn-ghost" onclick="showPage('profile')" id="profile-btn" style="display:none">👤</button>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Тема">🌙</button>
     <span class="nav-user" id="nav-user"></span>
     <button class="btn btn-outline btn-sm" id="nav-logout" onclick="logout()" style="display:none">Выйти</button>
   </div>
 </nav>
 
-<!-- AUTH PAGE -->
+<!-- NOTIFICATIONS PANEL -->
+<div class="notif-panel" id="notif-panel">
+  <div class="notif-header">
+    <span>Уведомления</span>
+    <button class="btn-ghost btn-sm" onclick="markAllRead()">Все прочитаны</button>
+  </div>
+  <div id="notif-list"><div class="notif-empty">Нет уведомлений</div></div>
+</div>
+
+<!-- AUTH -->
 <div class="page active" id="page-auth">
   <div class="auth-wrap">
     <div class="auth-card">
       <div class="auth-title">Добро пожаловать</div>
-      <div class="auth-sub">Войди или зарегистрируйся для доступа к платформе</div>
+      <div class="auth-sub">Тестовая платформа QA TestZone</div>
       <div class="auth-tabs">
         <div class="auth-tab active" onclick="switchAuthTab('login')">Войти</div>
         <div class="auth-tab" onclick="switchAuthTab('register')">Регистрация</div>
       </div>
       <div id="form-login">
-        <div class="form-group"><label class="form-label">Имя пользователя</label><input class="form-input" id="login-username" placeholder="admin" value="admin"></div>
-        <div class="form-group"><label class="form-label">Пароль</label><input class="form-input" type="password" id="login-password" placeholder="••••••" value="admin123"></div>
+        <div class="form-group">
+          <label class="form-label">Имя пользователя <span id="err-login-u" class="field-error">Обязательное поле</span></label>
+          <input class="form-input" id="login-username" placeholder="admin" value="admin" oninput="clearErr('login-username','err-login-u')">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Пароль <span id="err-login-p" class="field-error">Обязательное поле</span></label>
+          <input class="form-input" type="password" id="login-password" placeholder="••••••" value="admin123" onkeydown="if(event.key==='Enter')doLogin()" oninput="clearErr('login-password','err-login-p')">
+        </div>
         <div class="form-error" id="login-error"></div>
-        <button class="btn btn-teal" style="width:100%;margin-top:4px" onclick="doLogin()">Войти</button>
+        <button class="btn btn-teal" style="width:100%;margin-top:4px" onclick="doLogin()" id="login-btn">Войти</button>
         <div class="test-hint">Тестовые аккаунты: <b>admin / admin123</b> или <b>tester / tester123</b></div>
       </div>
       <div id="form-register" style="display:none">
-        <div class="form-group"><label class="form-label">Имя пользователя</label><input class="form-input" id="reg-username" placeholder="newuser"></div>
-        <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="reg-email" placeholder="user@test.com"></div>
-        <div class="form-group"><label class="form-label">Пароль</label><input class="form-input" type="password" id="reg-password" placeholder="••••••"></div>
+        <div class="form-group">
+          <label class="form-label">Имя пользователя <span id="err-reg-u" class="field-error">Мин. 3 символа</span></label>
+          <input class="form-input" id="reg-username" placeholder="newuser" oninput="validateRegField('reg-username','err-reg-u',v=>v.length>=3)">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email <span id="err-reg-e" class="field-error">Неверный формат</span></label>
+          <input class="form-input" id="reg-email" placeholder="user@test.com" oninput="validateRegField('reg-email','err-reg-e',v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v))">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Пароль <span id="err-reg-p" class="field-error">Мин. 6 символов</span></label>
+          <input class="form-input" type="password" id="reg-password" placeholder="••••••" oninput="validateRegField('reg-password','err-reg-p',v=>v.length>=6)">
+        </div>
         <div class="form-error" id="reg-error"></div>
         <button class="btn btn-teal" style="width:100%;margin-top:4px" onclick="doRegister()">Зарегистрироваться</button>
       </div>
@@ -215,81 +307,137 @@
   </div>
 </div>
 
-<!-- SHOP PAGE -->
+<!-- SHOP -->
 <div class="page" id="page-shop">
-  <div class="page-title">Магазин</div>
-  <div class="page-sub">Каталог товаров. Можно фильтровать по категории и цене.</div>
+  <div class="page-header">
+    <div><div class="page-title">Магазин</div><div class="page-sub">Каталог товаров</div></div>
+    <button class="btn btn-teal btn-sm" onclick="openModal('modal-product')">+ Добавить товар</button>
+  </div>
   <div class="filters">
-    <span class="filter-label">Категория:</span>
-    <select class="filter-input" id="filter-cat" onchange="loadProducts()"><option value="">Все</option></select>
-    <span class="filter-label">Цена от:</span>
-    <input class="filter-input" type="number" id="filter-min" placeholder="0" style="width:80px" onchange="loadProducts()">
-    <span class="filter-label">до:</span>
-    <input class="filter-input" type="number" id="filter-max" placeholder="9999" style="width:80px" onchange="loadProducts()">
-    <button class="btn btn-teal btn-sm" onclick="openProductModal()">+ Добавить товар</button>
+    <div class="search-wrap"><span class="search-icon">🔍</span>
+      <input class="form-input search-input" id="shop-search" placeholder="Поиск товаров..." oninput="loadProducts()">
+    </div>
+    <select class="filter-input" id="filter-cat" onchange="loadProducts()"><option value="">Все категории</option></select>
+    <select class="filter-input" id="filter-sort" onchange="loadProducts()">
+      <option value="">Без сортировки</option>
+      <option value="price_asc">Цена ↑</option>
+      <option value="price_desc">Цена ↓</option>
+      <option value="name_asc">Название А-Я</option>
+      <option value="name_desc">Название Я-А</option>
+    </select>
+    <span class="filter-input" id="shop-count" style="color:var(--text3);border:none;background:none;padding-left:0"></span>
   </div>
   <div class="grid grid-3" id="products-grid"><div class="loading">Загрузка...</div></div>
+  <div class="pagination" id="shop-pagination"></div>
 </div>
 
-<!-- BLOG PAGE -->
+<!-- CART -->
+<div class="page" id="page-cart">
+  <div class="page-header">
+    <div><div class="page-title">Корзина</div><div class="page-sub">Ваши выбранные товары</div></div>
+    <button class="btn btn-outline btn-sm" onclick="showPage('shop')">← Продолжить покупки</button>
+  </div>
+  <div id="cart-content"></div>
+</div>
+
+<!-- BLOG -->
 <div class="page" id="page-blog">
   <div id="blog-list-view">
-    <div class="page-title">Блог</div>
-    <div class="page-sub">Статьи и новости. Кликни на пост чтобы читать и комментировать.</div>
-    <div class="action-bar">
-      <input class="filter-input" id="filter-tag" placeholder="Фильтр по тегу..." style="width:180px" onkeyup="filterPosts()">
-      <button class="btn btn-teal btn-sm" onclick="openPostModal()">+ Новый пост</button>
+    <div class="page-header">
+      <div><div class="page-title">Блог</div><div class="page-sub">Статьи сообщества</div></div>
+      <button class="btn btn-teal btn-sm" onclick="openModal('modal-post')">+ Новый пост</button>
+    </div>
+    <div class="filters">
+      <div class="search-wrap"><span class="search-icon">🔍</span>
+        <input class="form-input search-input" id="blog-search" placeholder="Поиск постов..." oninput="loadPosts()">
+      </div>
+      <input class="filter-input" id="filter-tag" placeholder="Тег..." style="width:120px" oninput="loadPosts()">
+      <select class="filter-input" id="blog-sort" onchange="loadPosts()">
+        <option value="newest">Новые</option>
+        <option value="oldest">Старые</option>
+        <option value="most_commented">Популярные</option>
+      </select>
     </div>
     <div class="grid grid-2" id="posts-grid"><div class="loading">Загрузка...</div></div>
+    <div class="pagination" id="blog-pagination"></div>
   </div>
   <div id="blog-detail-view" style="display:none">
-    <button class="btn btn-outline btn-sm" onclick="closeBlogDetail()" style="margin-bottom:16px">← Назад</button>
+    <button class="btn btn-outline btn-sm" onclick="closeBlogDetail()" style="margin-bottom:14px">← Назад</button>
     <div id="blog-detail-content"></div>
   </div>
 </div>
 
-<!-- TASKS PAGE -->
+<!-- TASKS -->
 <div class="page" id="page-tasks">
-  <div class="page-title">Задачи</div>
-  <div class="page-sub">Управление задачами с приоритетами и статусами.</div>
-  <div class="action-bar">
+  <div class="page-header">
+    <div><div class="page-title">Задачи</div><div class="page-sub">Управление задачами</div></div>
+    <button class="btn btn-teal btn-sm" onclick="openModal('modal-task')">+ Новая задача</button>
+  </div>
+  <div class="filters">
     <select class="filter-input" id="filter-status" onchange="loadTasks()">
-      <option value="">Все статусы</option>
-      <option value="todo">Todo</option>
-      <option value="in_progress">In Progress</option>
-      <option value="done">Done</option>
+      <option value="">Все статусы</option><option value="todo">Todo</option>
+      <option value="in_progress">In Progress</option><option value="done">Done</option>
     </select>
     <select class="filter-input" id="filter-priority" onchange="loadTasks()">
-      <option value="">Все приоритеты</option>
-      <option value="high">High</option>
-      <option value="medium">Medium</option>
-      <option value="low">Low</option>
+      <option value="">Все приоритеты</option><option value="high">High</option>
+      <option value="medium">Medium</option><option value="low">Low</option>
     </select>
-    <button class="btn btn-teal btn-sm" onclick="openTaskModal()">+ Новая задача</button>
   </div>
   <div id="tasks-list"><div class="loading">Загрузка...</div></div>
 </div>
 
-<!-- PAYMENTS PAGE -->
+<!-- PAYMENTS -->
 <div class="page" id="page-payments">
-  <div class="page-title">Платежи</div>
-  <div class="page-sub">История транзакций вашего аккаунта.</div>
-  <div id="payment-stats" class="stats-row"></div>
-  <div class="action-bar">
+  <div class="page-header">
+    <div><div class="page-title">Платежи</div><div class="page-sub">История транзакций</div></div>
+    <button class="btn btn-teal btn-sm" onclick="openModal('modal-payment')">+ Отправить</button>
+  </div>
+  <div class="stats-row" id="payment-stats"></div>
+  <div class="filters">
     <select class="filter-input" id="filter-pay-status" onchange="loadPayments()">
-      <option value="">Все</option>
-      <option value="completed">Completed</option>
-      <option value="refunded">Refunded</option>
+      <option value="">Все</option><option value="completed">Completed</option><option value="refunded">Refunded</option>
     </select>
-    <button class="btn btn-teal btn-sm" onclick="openPaymentModal()">+ Отправить платёж</button>
   </div>
   <div id="payments-list"><div class="loading">Загрузка...</div></div>
 </div>
 
-<!-- PROFILE PAGE -->
+<!-- SEARCH PAGE -->
+<div class="page" id="page-search-page">
+  <div class="page-header">
+    <div><div class="page-title">Поиск</div><div class="page-sub">Поиск по всей платформе</div></div>
+  </div>
+  <div class="filters">
+    <div class="search-wrap" style="max-width:400px;flex:1">
+      <span class="search-icon">🔍</span>
+      <input class="form-input search-input" id="global-search-input" placeholder="Введи запрос и нажми Enter..." onkeydown="if(event.key==='Enter')doGlobalSearch()">
+    </div>
+    <button class="btn btn-teal btn-sm" onclick="doGlobalSearch()">Найти</button>
+  </div>
+  <div id="search-results"></div>
+</div>
+
+<!-- ADMIN -->
+<div class="page" id="page-admin">
+  <div class="page-title" style="margin-bottom:6px">👑 Панель администратора</div>
+  <div class="page-sub" style="margin-bottom:20px">Управление платформой — только для admin</div>
+  <div class="stats-row" id="admin-stats"></div>
+  <div class="page-header" style="margin-top:8px">
+    <div style="font-size:14px;font-weight:600">Пользователи</div>
+    <div style="display:flex;gap:8px">
+      <input class="filter-input" id="admin-user-search" placeholder="Поиск по имени..." oninput="loadAdminUsers()">
+      <select class="filter-input" id="admin-user-role" onchange="loadAdminUsers()">
+        <option value="">Все роли</option><option value="admin">Admin</option><option value="user">User</option>
+      </select>
+    </div>
+  </div>
+  <div id="admin-users-list"><div class="loading">Загрузка...</div></div>
+</div>
+
+<!-- PROFILE -->
 <div class="page" id="page-profile">
-  <div class="page-title">Профиль</div>
-  <div class="page-sub">Информация о вашем аккаунте.</div>
+  <div class="page-header">
+    <div><div class="page-title">Профиль</div><div class="page-sub">Информация об аккаунте</div></div>
+  </div>
   <div class="profile-card" id="profile-content"><div class="loading">Загрузка...</div></div>
 </div>
 
@@ -297,10 +445,12 @@
 <div class="modal-overlay" id="modal-product">
   <div class="modal">
     <div class="modal-title">Добавить товар <button class="modal-close" onclick="closeModal('modal-product')">✕</button></div>
-    <div class="form-row"><label class="form-label">Название</label><input class="form-input" id="p-name" placeholder="iPhone 15"></div>
-    <div class="form-row"><label class="form-label">Категория</label><input class="form-input" id="p-cat" placeholder="Electronics"></div>
-    <div class="form-row"><label class="form-label">Цена</label><input class="form-input" type="number" id="p-price" placeholder="999.99"></div>
-    <div class="form-row"><label class="form-label">Остаток на складе</label><input class="form-input" type="number" id="p-stock" placeholder="100"></div>
+    <div class="form-row"><label class="form-label">Название * <span class="field-error" id="err-p-name">Обязательное поле</span></label><input class="form-input" id="p-name" placeholder="iPhone 15" oninput="clearFieldErr('p-name','err-p-name')"></div>
+    <div class="form-row"><label class="form-label">Категория * <span class="field-error" id="err-p-cat">Обязательное поле</span></label><input class="form-input" id="p-cat" placeholder="Electronics" oninput="clearFieldErr('p-cat','err-p-cat')"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="form-row"><label class="form-label">Цена * <span class="field-error" id="err-p-price">Укажи цену</span></label><input class="form-input" type="number" id="p-price" placeholder="999.99" min="0" oninput="clearFieldErr('p-price','err-p-price')"></div>
+      <div class="form-row"><label class="form-label">Остаток</label><input class="form-input" type="number" id="p-stock" placeholder="100" min="0"></div>
+    </div>
     <div class="form-row"><label class="form-label">Описание</label><textarea class="form-input" id="p-desc" rows="2" placeholder="Описание товара..."></textarea></div>
     <button class="btn btn-teal" style="width:100%;margin-top:8px" onclick="createProduct()">Добавить</button>
   </div>
@@ -309,9 +459,9 @@
 <div class="modal-overlay" id="modal-post">
   <div class="modal">
     <div class="modal-title">Новый пост <button class="modal-close" onclick="closeModal('modal-post')">✕</button></div>
-    <div class="form-row"><label class="form-label">Заголовок</label><input class="form-input" id="post-title-inp" placeholder="Заголовок поста"></div>
-    <div class="form-row"><label class="form-label">Содержание</label><textarea class="form-input" id="post-body-inp" rows="4" placeholder="Текст поста..."></textarea></div>
-    <div class="form-row"><label class="form-label">Теги (через запятую)</label><input class="form-input" id="post-tags-inp" placeholder="qa, testing"></div>
+    <div class="form-row"><label class="form-label">Заголовок * <span class="field-error" id="err-post-title">Обязательное поле</span></label><input class="form-input" id="post-title-inp" placeholder="Заголовок поста" oninput="clearFieldErr('post-title-inp','err-post-title')"></div>
+    <div class="form-row"><label class="form-label">Содержание * <span class="field-error" id="err-post-body">Мин. 10 символов</span></label><textarea class="form-input" id="post-body-inp" rows="4" placeholder="Текст поста..." oninput="clearFieldErr('post-body-inp','err-post-body')"></textarea></div>
+    <div class="form-row"><label class="form-label">Теги (через запятую)</label><input class="form-input" id="post-tags-inp" placeholder="qa, testing, api"></div>
     <button class="btn btn-teal" style="width:100%;margin-top:8px" onclick="createPost()">Опубликовать</button>
   </div>
 </div>
@@ -319,7 +469,7 @@
 <div class="modal-overlay" id="modal-task">
   <div class="modal">
     <div class="modal-title">Новая задача <button class="modal-close" onclick="closeModal('modal-task')">✕</button></div>
-    <div class="form-row"><label class="form-label">Название</label><input class="form-input" id="t-title" placeholder="Название задачи"></div>
+    <div class="form-row"><label class="form-label">Название * <span class="field-error" id="err-t-title">Обязательное поле</span></label><input class="form-input" id="t-title" placeholder="Название задачи" oninput="clearFieldErr('t-title','err-t-title')"></div>
     <div class="form-row"><label class="form-label">Описание</label><textarea class="form-input" id="t-desc" rows="2" placeholder="Описание..."></textarea></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
       <div class="form-row"><label class="form-label">Приоритет</label>
@@ -335,402 +485,672 @@
 <div class="modal-overlay" id="modal-payment">
   <div class="modal">
     <div class="modal-title">Отправить платёж <button class="modal-close" onclick="closeModal('modal-payment')">✕</button></div>
-    <div class="form-row"><label class="form-label">Получатель (User ID)</label><input class="form-input" id="pay-to" placeholder="Вставь ID пользователя"></div>
-    <div class="form-row"><label class="form-label">Сумма (USD)</label><input class="form-input" type="number" id="pay-amount" placeholder="50.00"></div>
+    <div class="form-row"><label class="form-label">Получатель (User ID) * <span class="field-error" id="err-pay-to">Обязательное поле</span></label><input class="form-input" id="pay-to" placeholder="ID пользователя" oninput="clearFieldErr('pay-to','err-pay-to')"></div>
+    <div class="form-row"><label class="form-label">Сумма (USD) * <span class="field-error" id="err-pay-amt">Должна быть > 0</span></label><input class="form-input" type="number" id="pay-amount" placeholder="50.00" min="0.01" step="0.01" oninput="clearFieldErr('pay-amount','err-pay-amt')"></div>
     <div class="form-row"><label class="form-label">Описание</label><input class="form-input" id="pay-desc" placeholder="Оплата курса"></div>
-    <div style="font-size:11px;color:var(--text3);margin-bottom:12px">💡 ID пользователей можно найти в Профиле или через GET /users/</div>
-    <button class="btn btn-teal" style="width:100%;margin-top:4px" onclick="createPayment()">Отправить</button>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:10px">💡 ID пользователей можно найти в Профиле или в Админ панели</div>
+    <button class="btn btn-teal" style="width:100%" onclick="createPayment()">Отправить</button>
   </div>
 </div>
 
 <div class="modal-overlay" id="modal-comment">
   <div class="modal">
     <div class="modal-title">Добавить комментарий <button class="modal-close" onclick="closeModal('modal-comment')">✕</button></div>
-    <div class="form-row"><label class="form-label">Комментарий</label><textarea class="form-input" id="comment-text" rows="3" placeholder="Напиши комментарий..."></textarea></div>
+    <div class="form-row"><label class="form-label">Комментарий * <span class="field-error" id="err-comment">Мин. 2 символа</span></label><textarea class="form-input" id="comment-text" rows="3" placeholder="Напиши комментарий..."></textarea></div>
     <button class="btn btn-teal" style="width:100%;margin-top:8px" onclick="submitComment()">Отправить</button>
   </div>
 </div>
 
-<!-- TOASTS -->
+<div class="modal-overlay" id="modal-order">
+  <div class="modal">
+    <div class="modal-title">Оформление заказа <button class="modal-close" onclick="closeModal('modal-order')">✕</button></div>
+    <div class="form-row"><label class="form-label">Имя *</label><input class="form-input" id="order-name" placeholder="Ваше имя"></div>
+    <div class="form-row"><label class="form-label">Email *</label><input class="form-input" id="order-email" placeholder="email@example.com"></div>
+    <div class="form-row"><label class="form-label">Адрес доставки *</label><textarea class="form-input" id="order-addr" rows="2" placeholder="Город, улица, дом..."></textarea></div>
+    <div class="form-row"><label class="form-label">Комментарий к заказу</label><input class="form-input" id="order-comment" placeholder="Необязательно"></div>
+    <div class="divider"></div>
+    <div id="order-summary" style="font-size:13px;color:var(--text2);margin-bottom:12px"></div>
+    <button class="btn btn-teal" style="width:100%" onclick="placeOrder()">Подтвердить заказ</button>
+  </div>
+</div>
+
 <div class="toast-wrap" id="toast-wrap"></div>
 
 <script>
 const BASE = 'https://test-api-users.vercel.app';
-let token = '';
-let currentUser = null;
-let allPosts = [];
-let currentPostId = null;
-const catEmoji = {Electronics:'📱',Shoes:'👟',Books:'📚',Kitchen:'☕',default:'📦'};
+let token='', currentUser=null, cart={}, shopPage=1, blogPage=1, currentPostId=null;
+const catEmoji={'Electronics':'📱','Shoes':'👟','Books':'📚','Kitchen':'☕','default':'📦'};
 
-function api(path, opts={}) {
-  const headers = {'Content-Type':'application/json', ...(opts.headers||{})};
-  if (token) headers['Authorization'] = 'Bearer ' + token;
-  return fetch(BASE + path, {...opts, headers}).then(async r => {
-    const j = await r.json().catch(()=>({}));
-    if (!r.ok) throw {status: r.status, detail: j.detail || 'Ошибка'};
+// ── Core ──────────────────────────────────────────────────────────────────────
+function api(path,opts={}){
+  const h={'Content-Type':'application/json',...(opts.headers||{})};
+  if(token) h['Authorization']='Bearer '+token;
+  return fetch(BASE+path,{...opts,headers:h}).then(async r=>{
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok) throw{status:r.status,detail:j.detail||'Ошибка'};
     return j;
   });
 }
-function apiForm(path, data) {
-  const body = new URLSearchParams(data);
-  const headers = {};
-  if (token) headers['Authorization'] = 'Bearer ' + token;
-  return fetch(BASE + path, {method:'POST', headers, body}).then(async r => {
-    const j = await r.json().catch(()=>({}));
-    if (!r.ok) throw {status: r.status, detail: j.detail || 'Ошибка'};
+function apiForm(path,data){
+  const h={}; if(token) h['Authorization']='Bearer '+token;
+  return fetch(BASE+path,{method:'POST',headers:h,body:new URLSearchParams(data)}).then(async r=>{
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok) throw{status:r.status,detail:j.detail||'Ошибка'};
     return j;
   });
 }
-function toast(msg, type='success') {
-  const w = document.getElementById('toast-wrap');
-  const t = document.createElement('div');
-  t.className = `toast toast-${type}`;
-  t.textContent = msg;
-  w.appendChild(t);
-  setTimeout(()=>t.remove(), 3000);
+function toast(msg,type='success'){
+  const w=document.getElementById('toast-wrap');
+  const t=document.createElement('div');
+  t.className=`toast toast-${type}`; t.textContent=msg; w.appendChild(t);
+  setTimeout(()=>t.remove(),3000);
 }
-function showPage(name) {
-  if (!token && name !== 'auth') { toast('Сначала войди в систему', 'error'); return; }
+function openModal(id){document.getElementById(id).classList.add('show')}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('show')}));
+
+function showPage(name){
+  if(!token&&name!=='auth'){toast('Сначала войди в систему','error');return;}
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
   document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
-  const pages = {shop:0,blog:1,tasks:2,payments:3,profile:4};
-  if (pages[name] !== undefined) document.querySelectorAll('.nav-link')[pages[name]].classList.add('active');
-  if (name==='shop') { loadCategories(); loadProducts(); }
-  if (name==='blog') loadPosts();
-  if (name==='tasks') loadTasks();
-  if (name==='payments') { loadPaymentStats(); loadPayments(); }
-  if (name==='profile') loadProfile();
+  const map={shop:0,blog:1,tasks:2,payments:3,'search-page':4};
+  if(map[name]!==undefined) document.querySelectorAll('.nav-link')[map[name]].classList.add('active');
+  if(name==='shop'){loadCategories();loadProducts();}
+  if(name==='blog'){loadPosts();}
+  if(name==='tasks') loadTasks();
+  if(name==='payments'){loadPaymentStats();loadPayments();}
+  if(name==='profile') loadProfile();
+  if(name==='admin'){loadAdminStats();loadAdminUsers();}
+  if(name==='cart') renderCart();
+  // close notif panel
+  document.getElementById('notif-panel').classList.remove('show');
 }
-function goHome() { showPage(token ? 'shop' : 'auth'); }
-function closeModal(id) { document.getElementById(id).classList.remove('show'); }
-function openModal(id) { document.getElementById(id).classList.add('show'); }
+function goHome(){showPage(token?'shop':'auth');}
 
-// AUTH
-function switchAuthTab(tab) {
-  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active', (tab==='login'&&i===0)||(tab==='register'&&i===1)));
-  document.getElementById('form-login').style.display = tab==='login'?'block':'none';
-  document.getElementById('form-register').style.display = tab==='register'?'block':'none';
+// ── Theme ─────────────────────────────────────────────────────────────────────
+function toggleTheme(){
+  const th=document.documentElement.dataset.theme==='dark'?'light':'dark';
+  document.documentElement.dataset.theme=th;
+  document.querySelector('.theme-toggle').textContent=th==='dark'?'🌙':'☀️';
+  localStorage.setItem('theme',th);
 }
-async function doLogin() {
-  const u = document.getElementById('login-username').value.trim();
-  const p = document.getElementById('login-password').value;
-  const err = document.getElementById('login-error');
+(function(){const t=localStorage.getItem('theme')||'dark';document.documentElement.dataset.theme=t;document.querySelector('.theme-toggle').textContent=t==='dark'?'🌙':'☀️';})();
+
+// ── Validation ─────────────────────────────────────────────────────────────────
+function clearErr(inputId,errId){
+  document.getElementById(inputId).classList.remove('error');
+  document.getElementById(errId).classList.remove('show');
+}
+function clearFieldErr(inputId,errId){
+  document.getElementById(inputId)?.classList.remove('error');
+  document.getElementById(errId)?.classList.remove('show');
+}
+function showFieldErr(inputId,errId){
+  document.getElementById(inputId)?.classList.add('error');
+  document.getElementById(errId)?.classList.add('show');
+  return false;
+}
+function validateRegField(inputId,errId,fn){
+  const v=document.getElementById(inputId).value;
+  fn(v)?clearErr(inputId,errId):showFieldErr(inputId,errId);
+}
+
+// ── Auth ──────────────────────────────────────────────────────────────────────
+function switchAuthTab(tab){
+  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',(tab==='login'&&i===0)||(tab==='register'&&i===1)));
+  document.getElementById('form-login').style.display=tab==='login'?'block':'none';
+  document.getElementById('form-register').style.display=tab==='register'?'block':'none';
+}
+async function doLogin(){
+  const u=document.getElementById('login-username').value.trim();
+  const p=document.getElementById('login-password').value;
+  let ok=true;
+  if(!u){showFieldErr('login-username','err-login-u');ok=false;}
+  if(!p){showFieldErr('login-password','err-login-p');ok=false;}
+  if(!ok) return;
+  const err=document.getElementById('login-error');
   err.classList.remove('show');
-  try {
-    const r = await apiForm('/auth/login', {username:u, password:p});
-    token = r.access_token;
-    currentUser = r.user;
-    document.getElementById('nav-user').textContent = '👤 ' + r.user.username;
-    document.getElementById('nav-logout').style.display = 'block';
-    toast('Добро пожаловать, ' + r.user.username + '!');
+  const btn=document.getElementById('login-btn');
+  btn.disabled=true; btn.textContent='Входим...';
+  try{
+    const r=await apiForm('/auth/login',{username:u,password:p});
+    token=r.access_token; currentUser=r.user;
+    localStorage.setItem('qa_token',token);
+    localStorage.setItem('qa_user',JSON.stringify(r.user));
+    document.getElementById('nav-user').textContent='👤 '+r.user.username;
+    document.getElementById('nav-logout').style.display='block';
+    document.getElementById('profile-btn').style.display='block';
+    if(r.user.role==='admin') document.getElementById('admin-link').style.display='block';
+    toast('Добро пожаловать, '+r.user.username+'!');
+    loadNotifications();
     showPage('shop');
-  } catch(e) {
-    err.textContent = e.detail || 'Неверный логин или пароль';
+  }catch(e){
+    err.textContent=e.detail||'Неверный логин или пароль';
     err.classList.add('show');
   }
+  btn.disabled=false; btn.textContent='Войти';
 }
-async function doRegister() {
-  const u = document.getElementById('reg-username').value.trim();
-  const em = document.getElementById('reg-email').value.trim();
-  const p = document.getElementById('reg-password').value;
-  const err = document.getElementById('reg-error');
-  err.classList.remove('show');
-  if (!u || !em || !p) { err.textContent='Заполни все поля'; err.classList.add('show'); return; }
-  try {
-    await api('/auth/register', {method:'POST', body: JSON.stringify({username:u,email:em,password:p})});
-    toast('Аккаунт создан! Теперь войди.', 'info');
+async function doRegister(){
+  const u=document.getElementById('reg-username').value.trim();
+  const em=document.getElementById('reg-email').value.trim();
+  const p=document.getElementById('reg-password').value;
+  let ok=true;
+  if(u.length<3){showFieldErr('reg-username','err-reg-u');ok=false;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){showFieldErr('reg-email','err-reg-e');ok=false;}
+  if(p.length<6){showFieldErr('reg-password','err-reg-p');ok=false;}
+  if(!ok) return;
+  const err=document.getElementById('reg-error'); err.classList.remove('show');
+  try{
+    await api('/auth/register',{method:'POST',body:JSON.stringify({username:u,email:em,password:p})});
+    toast('Аккаунт создан! Теперь войди.','info');
     switchAuthTab('login');
-    document.getElementById('login-username').value = u;
-  } catch(e) {
-    err.textContent = e.detail || 'Ошибка регистрации';
-    err.classList.add('show');
-  }
+    document.getElementById('login-username').value=u;
+  }catch(e){err.textContent=e.detail||'Ошибка регистрации';err.classList.add('show');}
 }
-function logout() {
-  token = ''; currentUser = null;
-  document.getElementById('nav-user').textContent = '';
-  document.getElementById('nav-logout').style.display = 'none';
-  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+function logout(){
+  token='';currentUser=null;cart={};
+  localStorage.removeItem('qa_token'); localStorage.removeItem('qa_user');
+  document.getElementById('nav-user').textContent='';
+  document.getElementById('nav-logout').style.display='none';
+  document.getElementById('profile-btn').style.display='none';
+  document.getElementById('admin-link').style.display='none';
+  document.getElementById('cart-count').style.display='none';
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-auth').classList.add('active');
-  toast('Вышли из системы', 'info');
+  toast('Вышли из системы','info');
 }
 
-// SHOP
-async function loadCategories() {
-  try {
-    const r = await api('/products/categories/all');
-    const sel = document.getElementById('filter-cat');
-    sel.innerHTML = '<option value="">Все</option>';
-    r.categories.forEach(c => { const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
-  } catch(e){}
+// Auto-login from localStorage
+(function(){
+  const t=localStorage.getItem('qa_token');
+  const u=localStorage.getItem('qa_user');
+  if(t&&u){
+    token=t; currentUser=JSON.parse(u);
+    document.getElementById('nav-user').textContent='👤 '+currentUser.username;
+    document.getElementById('nav-logout').style.display='block';
+    document.getElementById('profile-btn').style.display='block';
+    if(currentUser.role==='admin') document.getElementById('admin-link').style.display='block';
+    loadNotifications();
+    showPage('shop');
+  }
+})();
+
+// ── CART ──────────────────────────────────────────────────────────────────────
+function addToCart(product){
+  if(cart[product.id]) cart[product.id].qty++;
+  else cart[product.id]={...product,qty:1};
+  updateCartBadge();
+  toast(`${product.name} добавлен в корзину`);
 }
-async function loadProducts() {
-  const grid = document.getElementById('products-grid');
-  grid.innerHTML = '<div class="loading">Загрузка...</div>';
-  const cat = document.getElementById('filter-cat').value;
-  const min = document.getElementById('filter-min').value;
-  const max = document.getElementById('filter-max').value;
-  let qs = '';
-  if (cat) qs += '&category='+encodeURIComponent(cat);
-  if (min) qs += '&min_price='+min;
-  if (max) qs += '&max_price='+max;
-  try {
-    const r = await api('/products/?'+(qs.startsWith('&')?qs.slice(1):qs));
-    if (!r.items.length) { grid.innerHTML = '<div class="empty"><div class="empty-icon">📦</div><div class="empty-title">Товары не найдены</div><div class="empty-sub">Попробуй изменить фильтры</div></div>'; return; }
-    grid.innerHTML = r.items.map(p=>`
-      <div class="card">
-        <div class="product-img">${catEmoji[p.category]||catEmoji.default}</div>
-        <div class="product-cat">${p.category}</div>
-        <div class="product-name">${p.name}</div>
-        <div class="product-desc">${p.description||'Нет описания'}</div>
-        <div class="product-footer">
-          <div>
-            <div class="product-price">$${p.price}</div>
-            <div class="product-stock">На складе: ${p.stock} шт.</div>
-          </div>
-          <div style="display:flex;gap:6px">
-            <button class="btn btn-outline btn-sm" onclick="deleteProduct('${p.id}')">🗑</button>
-          </div>
+function removeFromCart(id){delete cart[id];updateCartBadge();renderCart();}
+function changeQty(id,delta){
+  if(!cart[id]) return;
+  cart[id].qty+=delta;
+  if(cart[id].qty<=0) delete cart[id];
+  updateCartBadge(); renderCart();
+}
+function updateCartBadge(){
+  const total=Object.values(cart).reduce((s,x)=>s+x.qty,0);
+  const el=document.getElementById('cart-count');
+  el.style.display=total>0?'flex':'none'; el.textContent=total;
+}
+function renderCart(){
+  const el=document.getElementById('cart-content');
+  const items=Object.values(cart);
+  if(!items.length){el.innerHTML='<div class="empty"><div class="empty-icon">🛒</div><div class="empty-title">Корзина пуста</div><div class="empty-sub" style="margin-top:8px"><button class="btn btn-teal btn-sm" onclick="showPage(\'shop\')">Перейти в магазин</button></div></div>';return;}
+  const total=items.reduce((s,x)=>s+x.price*x.qty,0);
+  el.innerHTML=`<div class="card">
+    ${items.map(it=>`<div class="cart-item-row">
+      <span style="font-size:20px">${catEmoji[it.category]||catEmoji.default}</span>
+      <span class="cart-item-name">${it.name}<br><small style="color:var(--text3)">${it.category}</small></span>
+      <div class="cart-qty">
+        <button class="qty-btn" onclick="changeQty('${it.id}',-1)">−</button>
+        <span style="font-size:13px;min-width:20px;text-align:center">${it.qty}</span>
+        <button class="qty-btn" onclick="changeQty('${it.id}',1)">+</button>
+      </div>
+      <span style="font-size:14px;font-weight:600;color:var(--teal2);min-width:70px;text-align:right">$${(it.price*it.qty).toFixed(2)}</span>
+      <button class="btn btn-red btn-sm" onclick="removeFromCart('${it.id}')">✕</button>
+    </div>`).join('')}
+    <div class="cart-total">Итого: $${total.toFixed(2)}</div>
+    <button class="btn btn-teal" style="width:100%" onclick="openOrderModal()">Оформить заказ</button>
+  </div>`;
+}
+function openOrderModal(){
+  const items=Object.values(cart);
+  const total=items.reduce((s,x)=>s+x.price*x.qty,0);
+  document.getElementById('order-summary').innerHTML=`<b>Товаров: ${items.length}, Сумма: $${total.toFixed(2)}</b>`;
+  openModal('modal-order');
+}
+async function placeOrder(){
+  const name=document.getElementById('order-name').value.trim();
+  const email=document.getElementById('order-email').value.trim();
+  const addr=document.getElementById('order-addr').value.trim();
+  if(!name||!email||!addr){toast('Заполни все обязательные поля','error');return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){toast('Неверный формат email','error');return;}
+  // Simulate order via creating a task
+  const items=Object.values(cart);
+  const total=items.reduce((s,x)=>s+x.price*x.qty,0);
+  try{
+    await api('/tasks/',{method:'POST',body:JSON.stringify({
+      title:`Заказ от ${name} на $${total.toFixed(2)}`,
+      description:`Email: ${email}\nАдрес: ${addr}\nТовары: ${items.map(x=>x.name+'×'+x.qty).join(', ')}`,
+      priority:'high',status:'todo'
+    })});
+    cart={};updateCartBadge();
+    closeModal('modal-order');
+    toast('Заказ оформлен! Он создан как задача в системе.');
+    showPage('shop');
+  }catch(e){toast(e.detail||'Ошибка','error');}
+}
+
+// ── SHOP ──────────────────────────────────────────────────────────────────────
+async function loadCategories(){
+  try{
+    const r=await api('/products/categories/all');
+    const sel=document.getElementById('filter-cat');
+    sel.innerHTML='<option value="">Все категории</option>';
+    r.categories.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
+  }catch(e){}
+}
+async function loadProducts(){
+  const grid=document.getElementById('products-grid');
+  grid.innerHTML='<div class="loading">Загрузка...</div>';
+  const cat=document.getElementById('filter-cat').value;
+  const sort=document.getElementById('filter-sort').value;
+  const search=document.getElementById('shop-search').value;
+  let qs=`?page=${shopPage}&limit=9`;
+  if(cat) qs+=`&category=${encodeURIComponent(cat)}`;
+  if(sort) qs+=`&sort=${sort}`;
+  if(search) qs+=`&search=${encodeURIComponent(search)}`;
+  try{
+    const r=await api('/products/paginated/'+qs);
+    document.getElementById('shop-count').textContent=`Найдено: ${r.total}`;
+    if(!r.items.length){grid.innerHTML='<div class="empty"><div class="empty-icon">📦</div><div class="empty-title">Ничего не найдено</div></div>';renderPagination('shop-pagination',r,shopPage,p=>{shopPage=p;loadProducts();});return;}
+    grid.innerHTML=r.items.map(p=>`<div class="card">
+      <div class="product-img">${catEmoji[p.category]||catEmoji.default}</div>
+      <div class="product-cat">${p.category}</div>
+      <div class="product-name">${p.name}</div>
+      <div class="product-desc">${p.description||'Нет описания'}</div>
+      <div class="product-footer">
+        <div><div class="product-price">$${p.price}</div><div class="product-stock">Склад: ${p.stock} шт.</div></div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <button class="btn btn-teal btn-sm" onclick='addToCart(${JSON.stringify(p)})'>В корзину</button>
+          <button class="btn btn-red btn-sm" onclick="deleteProduct('${p.id}')">🗑</button>
         </div>
-      </div>`).join('');
-  } catch(e) { grid.innerHTML = '<div class="empty"><div class="empty-title">Ошибка загрузки</div></div>'; }
+      </div>
+    </div>`).join('');
+    renderPagination('shop-pagination',r,shopPage,p=>{shopPage=p;loadProducts();});
+  }catch(e){grid.innerHTML='<div class="empty"><div class="empty-title">Ошибка загрузки</div></div>';}
 }
-function openProductModal() { openModal('modal-product'); }
-async function createProduct() {
-  const body = { name: document.getElementById('p-name').value, category: document.getElementById('p-cat').value, price: parseFloat(document.getElementById('p-price').value)||0, stock: parseInt(document.getElementById('p-stock').value)||0, description: document.getElementById('p-desc').value };
-  if (!body.name || !body.category) { toast('Заполни название и категорию', 'error'); return; }
-  try {
-    await api('/products/', {method:'POST', body:JSON.stringify(body)});
-    closeModal('modal-product');
-    toast('Товар добавлен!');
-    loadProducts(); loadCategories();
-  } catch(e) { toast(e.detail||'Ошибка', 'error'); }
+async function createProduct(){
+  const name=document.getElementById('p-name').value.trim();
+  const cat=document.getElementById('p-cat').value.trim();
+  const price=parseFloat(document.getElementById('p-price').value);
+  let ok=true;
+  if(!name){showFieldErr('p-name','err-p-name');ok=false;}
+  if(!cat){showFieldErr('p-cat','err-p-cat');ok=false;}
+  if(!price||price<=0){showFieldErr('p-price','err-p-price');ok=false;}
+  if(!ok) return;
+  try{
+    await api('/products/',{method:'POST',body:JSON.stringify({name,category:cat,price,stock:parseInt(document.getElementById('p-stock').value)||0,description:document.getElementById('p-desc').value})});
+    closeModal('modal-product'); toast('Товар добавлен!'); shopPage=1; loadProducts(); loadCategories();
+  }catch(e){toast(e.detail||'Ошибка','error');}
 }
-async function deleteProduct(id) {
-  if (!confirm('Удалить товар?')) return;
-  try { await api('/products/'+id, {method:'DELETE'}); toast('Товар удалён'); loadProducts(); }
-  catch(e) { toast(e.detail||'Ошибка', 'error'); }
+async function deleteProduct(id){
+  if(!confirm('Удалить товар?')) return;
+  try{await api('/products/'+id,{method:'DELETE'});toast('Товар удалён');loadProducts();}
+  catch(e){toast(e.detail||'Ошибка','error');}
 }
 
-// BLOG
-async function loadPosts() {
-  const grid = document.getElementById('posts-grid');
-  grid.innerHTML = '<div class="loading">Загрузка...</div>';
-  try {
-    const r = await api('/posts/');
-    allPosts = r.items;
-    renderPosts(allPosts);
-  } catch(e) { grid.innerHTML = '<div class="empty"><div class="empty-title">Ошибка загрузки</div></div>'; }
-}
-function renderPosts(posts) {
-  const grid = document.getElementById('posts-grid');
-  if (!posts.length) { grid.innerHTML = '<div class="empty"><div class="empty-icon">📝</div><div class="empty-title">Нет постов</div></div>'; return; }
-  grid.innerHTML = posts.map(p=>`
-    <div class="card">
+// ── BLOG ──────────────────────────────────────────────────────────────────────
+async function loadPosts(){
+  const grid=document.getElementById('posts-grid');
+  grid.innerHTML='<div class="loading">Загрузка...</div>';
+  const search=document.getElementById('blog-search').value;
+  const tag=document.getElementById('filter-tag').value.trim();
+  const sort=document.getElementById('blog-sort').value;
+  let qs=`?page=${blogPage}&limit=6`;
+  if(search) qs+=`&search=${encodeURIComponent(search)}`;
+  if(tag) qs+=`&tag=${encodeURIComponent(tag)}`;
+  if(sort) qs+=`&sort=${sort}`;
+  try{
+    const r=await api('/posts/paginated/'+qs);
+    if(!r.items.length){grid.innerHTML='<div class="empty"><div class="empty-icon">📝</div><div class="empty-title">Нет постов</div></div>';renderPagination('blog-pagination',r,blogPage,p=>{blogPage=p;loadPosts();});return;}
+    grid.innerHTML=r.items.map(p=>`<div class="card">
       <div class="post-title" onclick="openPost('${p.id}')">${p.title}</div>
-      <div class="post-body">${p.body}</div>
+      <div class="post-body-preview">${p.body}</div>
       <div class="post-meta">
-        <span class="comment-count">💬 ${p.comments_count||0} комм.</span>
-        ${(p.tags||[]).map(t=>`<span class="tag">#${t}</span>`).join('')}
-        <span style="margin-left:auto;display:flex;gap:6px">
+        <button class="like-btn" onclick="toggleLike('${p.id}',this)">❤ <span class="like-count" data-post="${p.id}">...</span></button>
+        <span>💬 ${p.comments_count||0}</span>
+        ${(p.tags||[]).map(t=>`<span class="tag" onclick="filterByTag('${t}')">#${t}</span>`).join('')}
+        <span style="margin-left:auto;display:flex;gap:5px">
           <button class="btn btn-red btn-sm" onclick="deletePost('${p.id}',event)">🗑</button>
         </span>
       </div>
     </div>`).join('');
+    // load like counts
+    r.items.forEach(p=>loadLikeCount(p.id));
+    renderPagination('blog-pagination',r,blogPage,p=>{blogPage=p;loadPosts();});
+  }catch(e){grid.innerHTML='<div class="empty"><div class="empty-title">Ошибка загрузки</div></div>';}
 }
-function filterPosts() {
-  const tag = document.getElementById('filter-tag').value.toLowerCase().trim();
-  const filtered = tag ? allPosts.filter(p=>(p.tags||[]).some(t=>t.toLowerCase().includes(tag))||p.title.toLowerCase().includes(tag)) : allPosts;
-  renderPosts(filtered);
+async function loadLikeCount(pid){
+  try{
+    const r=await api('/posts/'+pid+'/likes');
+    document.querySelectorAll(`.like-count[data-post="${pid}"]`).forEach(el=>el.textContent=r.likes_count);
+  }catch(e){}
 }
-async function openPost(id) {
-  currentPostId = id;
-  document.getElementById('blog-list-view').style.display = 'none';
-  document.getElementById('blog-detail-view').style.display = 'block';
-  const content = document.getElementById('blog-detail-content');
-  content.innerHTML = '<div class="loading">Загрузка...</div>';
-  try {
-    const [post, comms] = await Promise.all([api('/posts/'+id), api('/posts/'+id+'/comments')]);
-    content.innerHTML = `
+async function toggleLike(pid,btn){
+  try{
+    const r=await api('/posts/'+pid+'/like',{method:'POST'});
+    btn.classList.toggle('liked',r.action==='liked');
+    document.querySelectorAll(`.like-count[data-post="${pid}"]`).forEach(el=>el.textContent=r.likes_count);
+  }catch(e){toast(e.detail||'Ошибка','error');}
+}
+function filterByTag(tag){
+  showPage('blog');
+  document.getElementById('filter-tag').value=tag;
+  loadPosts();
+}
+async function openPost(id){
+  currentPostId=id;
+  document.getElementById('blog-list-view').style.display='none';
+  document.getElementById('blog-detail-view').style.display='block';
+  const content=document.getElementById('blog-detail-content');
+  content.innerHTML='<div class="loading">Загрузка...</div>';
+  try{
+    const [post,comms,likes]=await Promise.all([api('/posts/'+id),api('/posts/'+id+'/comments'),api('/posts/'+id+'/likes')]);
+    content.innerHTML=`
       <div class="post-detail-title">${post.title}</div>
-      <div class="post-meta" style="margin-bottom:12px">${(post.tags||[]).map(t=>`<span class="tag">#${t}</span>`).join('')}</div>
+      <div class="post-meta" style="margin-bottom:12px">
+        <button class="like-btn ${likes.liked_by_me?'liked':''}" onclick="toggleLike('${id}',this)">❤ <span class="like-count" data-post="${id}">${likes.likes_count}</span></button>
+        <span>💬 ${comms.count} комм.</span>
+        ${(post.tags||[]).map(t=>`<span class="tag">#${t}</span>`).join('')}
+      </div>
       <div class="post-detail-body">${post.body}</div>
       <div class="divider"></div>
-      <div class="section-title">Комментарии (${comms.count})</div>
-      <div id="comments-list">
-        ${comms.items.map(c=>`<div class="comment-item"><div class="comment-author">Пользователь · ${new Date(c.created_at).toLocaleDateString()}</div>${c.body}</div>`).join('')}
-      </div>
-      <button class="btn btn-teal btn-sm" style="margin-top:12px" onclick="openModal('modal-comment')">+ Добавить комментарий</button>`;
-  } catch(e) { content.innerHTML = '<div class="empty"><div class="empty-title">Ошибка загрузки поста</div></div>'; }
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Комментарии (${comms.count})</div>
+      <div id="comments-list">${comms.items.map(c=>`<div class="comment-item"><div class="comment-author">${new Date(c.created_at).toLocaleString()}</div>${c.body}</div>`).join('')||'<div style="color:var(--text3);font-size:12.5px">Пока нет комментариев</div>'}</div>
+      <button class="btn btn-teal btn-sm" style="margin-top:10px" onclick="openModal('modal-comment')">+ Комментарий</button>`;
+  }catch(e){content.innerHTML='<div class="empty"><div class="empty-title">Ошибка загрузки</div></div>';}
 }
-function closeBlogDetail() {
-  document.getElementById('blog-list-view').style.display = 'block';
-  document.getElementById('blog-detail-view').style.display = 'none';
-  currentPostId = null;
+function closeBlogDetail(){
+  document.getElementById('blog-list-view').style.display='block';
+  document.getElementById('blog-detail-view').style.display='none';
+  currentPostId=null;
 }
-function openPostModal() { openModal('modal-post'); }
-async function createPost() {
-  const title = document.getElementById('post-title-inp').value.trim();
-  const body = document.getElementById('post-body-inp').value.trim();
-  const tags = document.getElementById('post-tags-inp').value.split(',').map(t=>t.trim()).filter(Boolean);
-  if (!title || !body) { toast('Заполни заголовок и текст', 'error'); return; }
-  try {
-    await api('/posts/', {method:'POST', body:JSON.stringify({title,body,tags})});
-    closeModal('modal-post');
-    toast('Пост опубликован!');
-    loadPosts();
-  } catch(e) { toast(e.detail||'Ошибка', 'error'); }
+async function createPost(){
+  const title=document.getElementById('post-title-inp').value.trim();
+  const body=document.getElementById('post-body-inp').value.trim();
+  const tags=document.getElementById('post-tags-inp').value.split(',').map(t=>t.trim()).filter(Boolean);
+  let ok=true;
+  if(!title){showFieldErr('post-title-inp','err-post-title');ok=false;}
+  if(body.length<10){showFieldErr('post-body-inp','err-post-body');ok=false;}
+  if(!ok) return;
+  try{
+    await api('/posts/',{method:'POST',body:JSON.stringify({title,body,tags})});
+    closeModal('modal-post'); toast('Пост опубликован!'); blogPage=1; loadPosts();
+  }catch(e){toast(e.detail||'Ошибка','error');}
 }
-async function deletePost(id, ev) {
+async function deletePost(id,ev){
   ev.stopPropagation();
-  if (!confirm('Удалить пост и все его комментарии?')) return;
-  try { await api('/posts/'+id, {method:'DELETE'}); toast('Пост удалён'); loadPosts(); }
-  catch(e) { toast(e.detail||'Нет прав на удаление', 'error'); }
+  if(!confirm('Удалить пост?')) return;
+  try{await api('/posts/'+id,{method:'DELETE'});toast('Пост удалён');loadPosts();}
+  catch(e){toast(e.detail||'Нет прав','error');}
 }
-async function submitComment() {
-  const body = document.getElementById('comment-text').value.trim();
-  if (!body) { toast('Напиши комментарий', 'error'); return; }
-  try {
-    await api('/posts/'+currentPostId+'/comments', {method:'POST', body:JSON.stringify({body})});
+async function submitComment(){
+  const body=document.getElementById('comment-text').value.trim();
+  if(body.length<2){showFieldErr('comment-text','err-comment');return;}
+  try{
+    await api('/posts/'+currentPostId+'/comments',{method:'POST',body:JSON.stringify({body})});
     closeModal('modal-comment');
-    document.getElementById('comment-text').value = '';
+    document.getElementById('comment-text').value='';
     toast('Комментарий добавлен!');
     openPost(currentPostId);
-  } catch(e) { toast(e.detail||'Ошибка', 'error'); }
+  }catch(e){toast(e.detail||'Ошибка','error');}
 }
 
-// TASKS
-async function loadTasks() {
-  const list = document.getElementById('tasks-list');
-  list.innerHTML = '<div class="loading">Загрузка...</div>';
-  const status = document.getElementById('filter-status').value;
-  const priority = document.getElementById('filter-priority').value;
-  let qs = '';
-  if (status) qs += '&status='+status;
-  if (priority) qs += '&priority='+priority;
-  try {
-    const r = await api('/tasks/?'+(qs.startsWith('&')?qs.slice(1):qs));
-    if (!r.items.length) { list.innerHTML = '<div class="empty"><div class="empty-icon">✅</div><div class="empty-title">Нет задач</div></div>'; return; }
-    list.innerHTML = r.items.map(t=>`
-      <div class="task-row">
-        <div class="task-title-wrap">
-          <div class="task-title">${t.title}</div>
-          ${t.description?`<div class="task-desc">${t.description}</div>`:''}
-        </div>
-        <span class="badge badge-${t.priority}">${t.priority}</span>
-        <select class="filter-input" style="font-size:12px;padding:4px 8px;width:120px" onchange="changeTaskStatus('${t.id}',this.value)">
-          <option value="todo" ${t.status==='todo'?'selected':''}>Todo</option>
-          <option value="in_progress" ${t.status==='in_progress'?'selected':''}>In Progress</option>
-          <option value="done" ${t.status==='done'?'selected':''}>Done</option>
-        </select>
-        <button class="btn btn-red btn-sm" onclick="deleteTask('${t.id}')">🗑</button>
-      </div>`).join('');
-  } catch(e) { list.innerHTML = '<div class="empty"><div class="empty-title">Ошибка загрузки</div></div>'; }
+// ── TASKS ─────────────────────────────────────────────────────────────────────
+async function loadTasks(){
+  const list=document.getElementById('tasks-list');
+  list.innerHTML='<div class="loading">Загрузка...</div>';
+  const status=document.getElementById('filter-status').value;
+  const priority=document.getElementById('filter-priority').value;
+  let qs='';
+  if(status) qs+=`&status=${status}`;
+  if(priority) qs+=`&priority=${priority}`;
+  try{
+    const r=await api('/tasks/?'+(qs.startsWith('&')?qs.slice(1):qs));
+    if(!r.items.length){list.innerHTML='<div class="empty"><div class="empty-icon">✅</div><div class="empty-title">Нет задач</div></div>';return;}
+    list.innerHTML=r.items.map(t=>`<div class="task-row">
+      <div class="task-title-wrap">
+        <div class="task-title">${t.title}</div>
+        ${t.description?`<div class="task-desc">${t.description}</div>`:''}
+      </div>
+      <span class="badge badge-${t.priority}">${t.priority}</span>
+      <select class="filter-input" style="font-size:12px;padding:4px 7px;width:115px" onchange="changeTaskStatus('${t.id}',this.value)">
+        <option value="todo" ${t.status==='todo'?'selected':''}>Todo</option>
+        <option value="in_progress" ${t.status==='in_progress'?'selected':''}>In Progress</option>
+        <option value="done" ${t.status==='done'?'selected':''}>Done</option>
+      </select>
+      <button class="btn btn-red btn-sm" onclick="deleteTask('${t.id}')">🗑</button>
+    </div>`).join('');
+  }catch(e){list.innerHTML='<div class="empty"><div class="empty-title">Ошибка загрузки</div></div>';}
 }
-function openTaskModal() { openModal('modal-task'); }
-async function createTask() {
-  const title = document.getElementById('t-title').value.trim();
-  if (!title) { toast('Введи название задачи', 'error'); return; }
-  const body = { title, description: document.getElementById('t-desc').value, priority: document.getElementById('t-priority').value, status: document.getElementById('t-status').value, due_date: document.getElementById('t-due').value||null };
-  try {
-    await api('/tasks/', {method:'POST', body:JSON.stringify(body)});
-    closeModal('modal-task');
-    toast('Задача создана!');
-    loadTasks();
-  } catch(e) { toast(e.detail||'Ошибка', 'error'); }
+async function createTask(){
+  const title=document.getElementById('t-title').value.trim();
+  if(!title){showFieldErr('t-title','err-t-title');return;}
+  const body={title,description:document.getElementById('t-desc').value,priority:document.getElementById('t-priority').value,status:document.getElementById('t-status').value,due_date:document.getElementById('t-due').value||null};
+  try{await api('/tasks/',{method:'POST',body:JSON.stringify(body)});closeModal('modal-task');toast('Задача создана!');loadTasks();}
+  catch(e){toast(e.detail||'Ошибка','error');}
 }
-async function changeTaskStatus(id, status) {
-  try {
-    await api(`/tasks/${id}/status?new_status=${status}`, {method:'PATCH'});
-    toast('Статус обновлён');
-  } catch(e) { toast(e.detail||'Ошибка', 'error'); loadTasks(); }
+async function changeTaskStatus(id,status){
+  try{await api(`/tasks/${id}/status?new_status=${status}`,{method:'PATCH'});toast('Статус обновлён');}
+  catch(e){toast(e.detail||'Ошибка','error');loadTasks();}
 }
-async function deleteTask(id) {
-  if (!confirm('Удалить задачу?')) return;
-  try { await api('/tasks/'+id, {method:'DELETE'}); toast('Задача удалена'); loadTasks(); }
-  catch(e) { toast(e.detail||'Ошибка', 'error'); }
+async function deleteTask(id){
+  if(!confirm('Удалить задачу?')) return;
+  try{await api('/tasks/'+id,{method:'DELETE'});toast('Задача удалена');loadTasks();}
+  catch(e){toast(e.detail||'Ошибка','error');}
 }
 
-// PAYMENTS
-async function loadPaymentStats() {
-  try {
-    const s = await api('/payments/stats/summary');
-    document.getElementById('payment-stats').innerHTML = `
-      <div class="stat-card"><div class="stat-val">${s.total_transactions}</div><div class="stat-label">Всего транзакций</div></div>
+// ── PAYMENTS ──────────────────────────────────────────────────────────────────
+async function loadPaymentStats(){
+  try{
+    const s=await api('/payments/stats/summary');
+    document.getElementById('payment-stats').innerHTML=`
+      <div class="stat-card"><div class="stat-val">${s.total_transactions}</div><div class="stat-label">Транзакций</div></div>
       <div class="stat-card"><div class="stat-val">$${(s.total_volume||0).toFixed(2)}</div><div class="stat-label">Общий объём</div></div>
       <div class="stat-card"><div class="stat-val">$${(s.by_status?.completed||0).toFixed(2)}</div><div class="stat-label">Завершено</div></div>
-      <div class="stat-card"><div class="stat-val">$${(s.by_status?.refunded||0).toFixed(2)}</div><div class="stat-label">Возврачено</div></div>`;
-  } catch(e){}
+      <div class="stat-card"><div class="stat-val">$${(s.by_status?.refunded||0).toFixed(2)}</div><div class="stat-label">Возвращено</div></div>`;
+  }catch(e){}
 }
-async function loadPayments() {
-  const list = document.getElementById('payments-list');
-  list.innerHTML = '<div class="loading">Загрузка...</div>';
-  const status = document.getElementById('filter-pay-status').value;
-  try {
-    const r = await api('/payments/'+(status?'?status='+status:''));
-    if (!r.items.length) { list.innerHTML = '<div class="empty"><div class="empty-icon">💳</div><div class="empty-title">Нет платежей</div></div>'; return; }
-    list.innerHTML = r.items.map(p=>{
-      const isOut = p.from_user_id === currentUser?.id;
+async function loadPayments(){
+  const list=document.getElementById('payments-list');
+  list.innerHTML='<div class="loading">Загрузка...</div>';
+  const status=document.getElementById('filter-pay-status').value;
+  try{
+    const r=await api('/payments/'+(status?'?status='+status:''));
+    if(!r.items.length){list.innerHTML='<div class="empty"><div class="empty-icon">💳</div><div class="empty-title">Нет платежей</div></div>';return;}
+    list.innerHTML=r.items.map(p=>{
+      const isOut=p.from_user_id===currentUser?.id;
       return `<div class="payment-row">
-        <div class="payment-icon" style="background:${isOut?'rgba(239,68,68,.12)':'rgba(34,197,94,.12)'}">${isOut?'↑':'↓'}</div>
+        <div class="payment-icon" style="background:${isOut?'rgba(239,68,68,.1)':'rgba(34,197,94,.1)'}">${isOut?'↑':'↓'}</div>
         <div class="payment-info">
           <div class="payment-desc">${p.description||'Платёж'}</div>
           <div class="payment-meta">${p.currency} · ${new Date(p.created_at).toLocaleDateString()}</div>
         </div>
         <span class="badge badge-${p.status}">${p.status}</span>
-        <span class="payment-amount ${isOut?'amount-out':'amount-in'}">${isOut?'-':'+'} $${p.amount}</span>
+        <span class="payment-amount ${isOut?'amount-out':'amount-in'}">${isOut?'-':'+'}$${p.amount}</span>
         ${p.status==='completed'?`<button class="btn btn-outline btn-sm" onclick="refundPayment('${p.id}')">Возврат</button>`:''}
       </div>`;
     }).join('');
-  } catch(e) { list.innerHTML = '<div class="empty"><div class="empty-title">Ошибка загрузки</div></div>'; }
+  }catch(e){list.innerHTML='<div class="empty"><div class="empty-title">Ошибка загрузки</div></div>';}
 }
-function openPaymentModal() { openModal('modal-payment'); }
-async function createPayment() {
-  const to = document.getElementById('pay-to').value.trim();
-  const amount = parseFloat(document.getElementById('pay-amount').value);
-  const desc = document.getElementById('pay-desc').value;
-  if (!to || !amount) { toast('Заполни получателя и сумму', 'error'); return; }
-  try {
-    await api('/payments/', {method:'POST', body:JSON.stringify({to_user_id:to, amount, description:desc})});
-    closeModal('modal-payment');
-    toast('Платёж отправлен!');
-    loadPayments(); loadPaymentStats();
-  } catch(e) { toast(e.detail||'Ошибка', 'error'); }
+async function createPayment(){
+  const to=document.getElementById('pay-to').value.trim();
+  const amount=parseFloat(document.getElementById('pay-amount').value);
+  let ok=true;
+  if(!to){showFieldErr('pay-to','err-pay-to');ok=false;}
+  if(!amount||amount<=0){showFieldErr('pay-amount','err-pay-amt');ok=false;}
+  if(!ok) return;
+  try{
+    await api('/payments/',{method:'POST',body:JSON.stringify({to_user_id:to,amount,description:document.getElementById('pay-desc').value})});
+    closeModal('modal-payment'); toast('Платёж отправлен!'); loadPayments(); loadPaymentStats();
+  }catch(e){toast(e.detail||'Ошибка','error');}
 }
-async function refundPayment(id) {
-  if (!confirm('Сделать возврат этого платежа?')) return;
-  try {
-    await api('/payments/'+id+'/refund', {method:'PATCH'});
-    toast('Возврат выполнен');
-    loadPayments(); loadPaymentStats();
-  } catch(e) { toast(e.detail||'Ошибка', 'error'); }
+async function refundPayment(id){
+  if(!confirm('Сделать возврат?')) return;
+  try{await api('/payments/'+id+'/refund',{method:'PATCH'});toast('Возврат выполнен');loadPayments();loadPaymentStats();}
+  catch(e){toast(e.detail||'Ошибка','error');}
 }
 
-// PROFILE
-async function loadProfile() {
-  try {
-    const u = await api('/users/me');
-    currentUser = u;
-    document.getElementById('profile-content').innerHTML = `
+// ── SEARCH ────────────────────────────────────────────────────────────────────
+function doQuickSearch(){
+  const q=document.getElementById('quick-search').value.trim();
+  if(!q) return;
+  document.getElementById('global-search-input').value=q;
+  showPage('search-page');
+  doGlobalSearch();
+}
+async function doGlobalSearch(){
+  const q=document.getElementById('global-search-input').value.trim();
+  if(!q) return;
+  const res=document.getElementById('search-results');
+  res.innerHTML='<div class="loading">Поиск...</div>';
+  try{
+    const r=await api('/search/?q='+encodeURIComponent(q));
+    res.innerHTML=`<div style="font-size:13px;color:var(--text2);margin-bottom:16px">Найдено результатов: <b>${r.total}</b> по запросу «${r.query}»</div>
+    ${r.products.count?`<div class="search-section"><div class="search-section-title">🛍 Товары (${r.products.count})</div>
+      ${r.products.items.map(p=>`<div class="search-result-item" onclick="showPage('shop')">
+        <b>${p.name}</b> <span class="product-cat">${p.category}</span><span style="float:right;color:var(--teal2)">$${p.price}</span>
+        <div style="font-size:11.5px;color:var(--text3);margin-top:2px">${p.description||''}</div>
+      </div>`).join('')}</div>`:''}
+    ${r.posts.count?`<div class="search-section"><div class="search-section-title">📝 Посты (${r.posts.count})</div>
+      ${r.posts.items.map(p=>`<div class="search-result-item" onclick="openPostFromSearch('${p.id}')">
+        <b>${p.title}</b><div style="font-size:11.5px;color:var(--text3);margin-top:2px">${p.body.slice(0,80)}...</div>
+      </div>`).join('')}</div>`:''}
+    ${r.tasks.count?`<div class="search-section"><div class="search-section-title">✅ Задачи (${r.tasks.count})</div>
+      ${r.tasks.items.map(t=>`<div class="search-result-item" onclick="showPage('tasks')">
+        <b>${t.title}</b> <span class="badge badge-${t.priority}">${t.priority}</span> <span class="badge badge-${t.status}">${t.status}</span>
+      </div>`).join('')}</div>`:''}
+    ${!r.total?'<div class="empty"><div class="empty-icon">🔍</div><div class="empty-title">Ничего не найдено</div></div>':''}`;
+  }catch(e){res.innerHTML='<div class="empty"><div class="empty-title">Ошибка поиска</div></div>';}
+}
+function openPostFromSearch(id){showPage('blog');openPost(id);}
+
+// ── ADMIN ─────────────────────────────────────────────────────────────────────
+async function loadAdminStats(){
+  try{
+    const s=await api('/admin/stats');
+    const c=s.counts;
+    document.getElementById('admin-stats').innerHTML=Object.entries(c).map(([k,v])=>`
+      <div class="stat-card"><div class="stat-val">${v}</div><div class="stat-label">${k}</div></div>`).join('');
+  }catch(e){document.getElementById('admin-stats').innerHTML='<div style="color:var(--red);font-size:13px">Нет прав или ошибка загрузки статистики</div>';}
+}
+async function loadAdminUsers(){
+  const list=document.getElementById('admin-users-list');
+  list.innerHTML='<div class="loading">Загрузка...</div>';
+  const search=document.getElementById('admin-user-search').value;
+  const role=document.getElementById('admin-user-role').value;
+  let qs='?limit=20';
+  if(search) qs+=`&search=${encodeURIComponent(search)}`;
+  if(role) qs+=`&role=${role}`;
+  try{
+    const r=await api('/admin/users'+qs);
+    if(!r.items.length){list.innerHTML='<div class="empty"><div class="empty-title">Нет пользователей</div></div>';return;}
+    list.innerHTML=r.items.map(u=>`<div class="user-row">
+      <div class="user-avatar">${u.username[0].toUpperCase()}</div>
+      <div class="user-info">
+        <div class="user-name">${u.username}</div>
+        <div class="user-email">${u.email}</div>
+      </div>
+      <span class="badge badge-${u.role}">${u.role}</span>
+      <select class="filter-input" style="font-size:12px;padding:3px 7px;width:100px" onchange="changeUserRole('${u.id}',this.value)">
+        <option value="user" ${u.role==='user'?'selected':''}>User</option>
+        <option value="admin" ${u.role==='admin'?'selected':''}>Admin</option>
+        <option value="moderator" ${u.role==='moderator'?'selected':''}>Moderator</option>
+      </select>
+      <div style="font-size:10.5px;color:var(--text3);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${u.id}</div>
+      ${u.id!==currentUser?.id?`<button class="btn btn-red btn-sm" onclick="adminDeleteUser('${u.id}')">🗑</button>`:'<span style="font-size:11px;color:var(--teal2)">Вы</span>'}
+    </div>`).join('');
+  }catch(e){list.innerHTML=`<div class="empty"><div class="empty-title">${e.detail||'Нет прав доступа'}</div></div>`;}
+}
+async function changeUserRole(uid,role){
+  try{await api(`/admin/users/${uid}/role?new_role=${role}`,{method:'PATCH'});toast('Роль изменена');loadAdminUsers();}
+  catch(e){toast(e.detail||'Ошибка','error');loadAdminUsers();}
+}
+async function adminDeleteUser(uid){
+  if(!confirm('Удалить пользователя? Это действие необратимо.')) return;
+  try{await api('/admin/users/'+uid,{method:'DELETE'});toast('Пользователь удалён');loadAdminUsers();}
+  catch(e){toast(e.detail||'Ошибка','error');}
+}
+
+// ── NOTIFICATIONS ─────────────────────────────────────────────────────────────
+async function loadNotifications(){
+  try{
+    const r=await api('/notifications/');
+    const dot=document.getElementById('notif-dot');
+    dot.classList.toggle('show',r.unread>0);
+    const list=document.getElementById('notif-list');
+    if(!r.items.length){list.innerHTML='<div class="notif-empty">Нет уведомлений</div>';return;}
+    list.innerHTML=r.items.map(n=>`<div class="notif-item ${n.is_read?'':'unread'}" onclick="markNotifRead('${n.id}')">
+      <div class="notif-msg">${n.message}</div>
+      <div class="notif-time">${new Date(n.created_at).toLocaleString()}</div>
+    </div>`).join('');
+  }catch(e){}
+}
+async function markNotifRead(id){
+  try{await api('/notifications/'+id+'/read',{method:'PATCH'});loadNotifications();}catch(e){}
+}
+async function markAllRead(){
+  try{await api('/notifications/read-all',{method:'PATCH'});toast('Все прочитаны','info');loadNotifications();}catch(e){}
+}
+function toggleNotifPanel(){
+  const p=document.getElementById('notif-panel');
+  p.classList.toggle('show');
+  if(p.classList.contains('show')) loadNotifications();
+}
+document.addEventListener('click',e=>{
+  const panel=document.getElementById('notif-panel');
+  if(!panel.contains(e.target)&&!e.target.closest('.nav-badge')){panel.classList.remove('show');}
+});
+
+// ── PROFILE ───────────────────────────────────────────────────────────────────
+async function loadProfile(){
+  try{
+    const u=await api('/users/me');
+    currentUser=u;
+    document.getElementById('profile-content').innerHTML=`
       <div class="profile-avatar">${u.username[0].toUpperCase()}</div>
       <div class="profile-name">${u.username}</div>
       <div class="profile-email">${u.email}</div>
       <div class="divider"></div>
-      <div class="profile-row"><span class="profile-key">ID</span><span style="font-family:monospace;font-size:12px;color:var(--text2)">${u.id}</span></div>
-      <div class="profile-row"><span class="profile-key">Роль</span><span class="badge ${u.role==='admin'?'badge-high':'badge-todo'}">${u.role}</span></div>
-      <div class="profile-row"><span class="profile-key">Дата регистрации</span><span>${new Date(u.created_at).toLocaleDateString()}</span></div>
+      <div class="profile-row"><span class="profile-key">ID</span><span style="font-family:monospace;font-size:11px;color:var(--text2)">${u.id}</span></div>
+      <div class="profile-row"><span class="profile-key">Роль</span><span class="badge badge-${u.role}">${u.role}</span></div>
+      <div class="profile-row"><span class="profile-key">Дата регистрации</span><span style="font-size:13px">${new Date(u.created_at).toLocaleDateString()}</span></div>
       <div class="divider"></div>
-      <div style="font-size:12px;color:var(--text3);margin-bottom:12px">Чтобы отправить платёж другому пользователю — скопируй его ID отсюда:</div>
-      <div style="font-family:monospace;font-size:12px;background:var(--bg3);padding:10px;border-radius:7px;color:var(--teal3);word-break:break-all">${u.id}</div>`;
-  } catch(e) { document.getElementById('profile-content').innerHTML = '<div class="empty"><div class="empty-title">Ошибка загрузки профиля</div></div>'; }
+      <div style="font-size:12px;color:var(--text3);margin-bottom:10px">Твой ID для отправки платежей:</div>
+      <div style="font-family:monospace;font-size:12px;background:var(--bg3);padding:10px;border-radius:7px;color:var(--teal3);word-break:break-all;cursor:pointer" onclick="navigator.clipboard.writeText('${u.id}');toast('ID скопирован!')">${u.id} <span style="font-size:10px;color:var(--text3)">📋</span></div>`;
+  }catch(e){document.getElementById('profile-content').innerHTML='<div class="empty"><div class="empty-title">Ошибка загрузки</div></div>';}
 }
 
-// CLOSE modals on overlay click
-document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', e => { if(e.target===o) o.classList.remove('show'); }));
-// ENTER to login
-document.getElementById('login-password').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+// ── PAGINATION ────────────────────────────────────────────────────────────────
+function renderPagination(containerId,r,currentPage,onPage){
+  const el=document.getElementById(containerId);
+  if(r.total_pages<=1){el.innerHTML='';return;}
+  let html='';
+  html+=`<button class="page-btn" ${currentPage<=1?'disabled':''} onclick="(${onPage.toString()})(${currentPage-1})">←</button>`;
+  for(let i=1;i<=r.total_pages;i++){
+    if(i===1||i===r.total_pages||Math.abs(i-currentPage)<=1){
+      html+=`<button class="page-btn ${i===currentPage?'active':''}" onclick="(${onPage.toString()})(${i})">${i}</button>`;
+    } else if(Math.abs(i-currentPage)===2){
+      html+=`<span style="color:var(--text3);padding:0 4px">…</span>`;
+    }
+  }
+  html+=`<button class="page-btn" ${currentPage>=r.total_pages?'disabled':''} onclick="(${onPage.toString()})(${currentPage+1})">→</button>`;
+  el.innerHTML=html;
+}
 </script>
 </body>
 </html>

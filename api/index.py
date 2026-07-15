@@ -525,3 +525,319 @@ def refund_payment(pid:str,cu=Depends(get_current_user)):
         return db_q("SELECT * FROM payments WHERE id=%s",(pid,),one=True)
     else:
         p["status"]="refunded"; return p
+
+# ══ SEARCH ════════════════════════════════════════════════════════════════════
+@app.get("/search/", tags=["Search"])
+def global_search(q: str = Query(..., min_length=1, description="Поисковый запрос"),
+                  cu=Depends(get_current_user)):
+    """Глобальный поиск по товарам, постам и задачам"""
+    q_lower = f"%{q.lower()}%"
+    results = {}
+
+    if use_pg():
+        products = db_q("SELECT * FROM products WHERE LOWER(name) LIKE %s OR LOWER(description) LIKE %s OR LOWER(category) LIKE %s",
+                        (q_lower, q_lower, q_lower))
+        posts = db_q("SELECT * FROM posts WHERE LOWER(title) LIKE %s OR LOWER(body) LIKE %s",
+                     (q_lower, q_lower))
+        for p in posts: p["tags"] = parse_tags(p.get("tags", "[]"))
+        tasks = db_q("SELECT * FROM tasks WHERE LOWER(title) LIKE %s OR LOWER(description) LIKE %s",
+                     (q_lower, q_lower))
+    else:
+        seed()
+        products = [p for p in _p.values() if q.lower() in p["name"].lower() or q.lower() in (p.get("description") or "").lower()]
+        posts = [p for p in _po.values() if q.lower() in p["title"].lower() or q.lower() in p["body"].lower()]
+        tasks = [t for t in _t.values() if q.lower() in t["title"].lower() or q.lower() in (t.get("description") or "").lower()]
+
+    results = {
+        "query": q,
+        "total": len(products) + len(posts) + len(tasks),
+        "products": {"count": len(products), "items": products},
+        "posts": {"count": len(posts), "items": posts},
+        "tasks": {"count": len(tasks), "items": tasks},
+    }
+    return results
+
+# ══ PAGINATION (products & posts with ?page=&limit=) ═══════════════════════════
+# Already supported via query params — adding dedicated paginated endpoints
+
+@app.get("/products/paginated/", tags=["Products"])
+def list_products_paginated(
+    page: int = Query(1, ge=1, description="Номер страницы"),
+    limit: int = Query(5, ge=1, le=50, description="Кол-во на странице"),
+    category: Optional[str] = Query(None),
+    search: Optional[str] = Query(None),
+    sort: Optional[str] = Query(None, description="price_asc / price_desc / name_asc / name_desc"),
+):
+    """Товары с пагинацией, поиском и сортировкой"""
+    if use_pg():
+        sql = "SELECT * FROM products WHERE 1=1"; params = []
+        if category: sql += " AND LOWER(category)=LOWER(%s)"; params.append(category)
+        if search: sql += " AND (LOWER(name) LIKE %s OR LOWER(description) LIKE %s)"; params += [f"%{search.lower()}%"] * 2
+        sort_map = {"price_asc": "price ASC", "price_desc": "price DESC",
+                    "name_asc": "name ASC", "name_desc": "name DESC"}
+        sql += f" ORDER BY {sort_map.get(sort, 'created_at DESC')}"
+        all_items = db_q(sql, params)
+    else:
+        seed(); all_items = list(_p.values())
+        if category: all_items = [x for x in all_items if x["category"].lower() == category.lower()]
+        if search: all_items = [x for x in all_items if search.lower() in x["name"].lower()]
+        sort_map = {"price_asc": lambda x: x["price"], "price_desc": lambda x: -x["price"],
+                    "name_asc": lambda x: x["name"], "name_desc": lambda x: x["name"]}
+        if sort in sort_map:
+            all_items = sorted(all_items, key=sort_map[sort], reverse=(sort in ["price_desc","name_desc"]))
+
+    total = len(all_items)
+    offset = (page - 1) * limit
+    items = all_items[offset:offset + limit]
+    return {
+        "page": page, "limit": limit, "total": total,
+        "total_pages": (total + limit - 1) // limit,
+        "has_next": offset + limit < total,
+        "has_prev": page > 1,
+        "items": items
+    }
+
+@app.get("/posts/paginated/", tags=["Posts"])
+def list_posts_paginated(
+    page: int = Query(1, ge=1),
+    limit: int = Query(5, ge=1, le=50),
+    tag: Optional[str] = Query(None),
+    search: Optional[str] = Query(None),
+    sort: Optional[str] = Query(None, description="newest / oldest / most_commented"),
+):
+    """Посты с пагинацией"""
+    if use_pg():
+        sql = """SELECT p.*, (SELECT COUNT(*) FROM comments c WHERE c.post_id=p.id) as comments_count
+                 FROM posts p WHERE 1=1"""; params = []
+        if search: sql += " AND (LOWER(title) LIKE %s OR LOWER(body) LIKE %s)"; params += [f"%{search.lower()}%"] * 2
+        sort_map = {"oldest": "p.created_at ASC", "most_commented": "comments_count DESC"}
+        sql += f" ORDER BY {sort_map.get(sort, 'p.created_at DESC')}"
+        all_items = db_q(sql, params)
+        for r in all_items: r["tags"] = parse_tags(r.get("tags", "[]"))
+        if tag: all_items = [r for r in all_items if tag in r["tags"]]
+    else:
+        seed(); all_items = list(_po.values())
+        for r in all_items: r["comments_count"] = len([c for c in _co.values() if c["post_id"] == r["id"]])
+        if tag: all_items = [r for r in all_items if tag in r.get("tags", [])]
+        if search: all_items = [r for r in all_items if search.lower() in r["title"].lower()]
+
+    total = len(all_items)
+    offset = (page - 1) * limit
+    items = all_items[offset:offset + limit]
+    return {"page": page, "limit": limit, "total": total,
+            "total_pages": (total + limit - 1) // limit,
+            "has_next": offset + limit < total, "has_prev": page > 1, "items": items}
+
+# ══ LIKES ═════════════════════════════════════════════════════════════════════
+# Likes stored in a separate table/memory
+
+_likes: dict = {}  # memory fallback: {post_id: set(user_id)}
+
+def init_likes_table():
+    db_x("""CREATE TABLE IF NOT EXISTS likes(
+        post_id TEXT NOT NULL, user_id TEXT NOT NULL,
+        created_at TEXT, PRIMARY KEY(post_id, user_id))""")
+
+try:
+    init_likes_table()
+except:
+    pass
+
+@app.post("/posts/{pid}/like", tags=["Likes"])
+def toggle_like(pid: str, cu=Depends(get_current_user)):
+    """
+    Лайк/дизлайк поста. Повторный вызов — снимает лайк (toggle).
+    Возвращает текущее количество лайков и статус (liked/unliked).
+    """
+    if use_pg():
+        p = db_q("SELECT id FROM posts WHERE id=%s", (pid,), one=True)
+        if not p: raise HTTPException(404, "Post not found")
+        existing = db_q("SELECT post_id FROM likes WHERE post_id=%s AND user_id=%s", (pid, cu["id"]), one=True)
+        if existing:
+            db_x("DELETE FROM likes WHERE post_id=%s AND user_id=%s", (pid, cu["id"]))
+            action = "unliked"
+        else:
+            db_x("INSERT INTO likes VALUES(%s,%s,%s)", (pid, cu["id"], now()))
+            action = "liked"
+        count = (db_q("SELECT COUNT(*) as c FROM likes WHERE post_id=%s", (pid,), one=True) or {}).get("c", 0)
+    else:
+        seed()
+        if pid not in _po: raise HTTPException(404, "Post not found")
+        if pid not in _likes: _likes[pid] = set()
+        if cu["id"] in _likes[pid]:
+            _likes[pid].discard(cu["id"]); action = "unliked"
+        else:
+            _likes[pid].add(cu["id"]); action = "liked"
+        count = len(_likes[pid])
+    return {"post_id": pid, "action": action, "likes_count": count, "liked_by_me": action == "liked"}
+
+@app.get("/posts/{pid}/likes", tags=["Likes"])
+def get_likes(pid: str):
+    """Количество лайков поста. Публичный."""
+    if use_pg():
+        p = db_q("SELECT id FROM posts WHERE id=%s", (pid,), one=True)
+        if not p: raise HTTPException(404, "Post not found")
+        count = (db_q("SELECT COUNT(*) as c FROM likes WHERE post_id=%s", (pid,), one=True) or {}).get("c", 0)
+    else:
+        seed()
+        if pid not in _po: raise HTTPException(404, "Post not found")
+        count = len(_likes.get(pid, set()))
+    return {"post_id": pid, "likes_count": count}
+
+# ══ ADMIN PANEL ═══════════════════════════════════════════════════════════════
+def require_admin(cu=Depends(get_current_user)):
+    if cu["role"] != "admin":
+        raise HTTPException(403, "Admin access required")
+    return cu
+
+@app.get("/admin/stats", tags=["Admin"])
+def admin_stats(cu=Depends(require_admin)):
+    """Общая статистика платформы. Только admin."""
+    if use_pg():
+        counts = {k: (db_q(f"SELECT COUNT(*) as c FROM {k}", one=True) or {}).get("c", 0)
+                  for k in ["users", "products", "posts", "comments", "tasks", "payments"]}
+        top_products = db_q("SELECT category, COUNT(*) as count FROM products GROUP BY category ORDER BY count DESC")
+        task_stats = db_q("SELECT status, COUNT(*) as count FROM tasks GROUP BY status")
+        pay_vol = (db_q("SELECT SUM(amount) as total FROM payments WHERE status='completed'", one=True) or {}).get("total", 0)
+    else:
+        seed()
+        counts = {"users":len(_u),"products":len(_p),"posts":len(_po),
+                  "comments":len(_co),"tasks":len(_t),"payments":len(_pay)}
+        top_products = []
+        task_stats = []
+        pay_vol = sum(p["amount"] for p in _pay.values() if p["status"] == "completed")
+    return {
+        "counts": counts,
+        "products_by_category": top_products,
+        "tasks_by_status": task_stats,
+        "total_payment_volume": round(float(pay_vol or 0), 2),
+    }
+
+@app.get("/admin/users", tags=["Admin"])
+def admin_list_users(
+    search: Optional[str] = Query(None),
+    role: Optional[str] = Query(None),
+    page: int = Query(1, ge=1),
+    limit: int = Query(10, ge=1, le=100),
+    cu=Depends(require_admin)
+):
+    """Список всех пользователей с поиском и пагинацией. Только admin."""
+    if use_pg():
+        sql = "SELECT * FROM users WHERE 1=1"; params = []
+        if search: sql += " AND (LOWER(username) LIKE %s OR LOWER(email) LIKE %s)"; params += [f"%{search.lower()}%"] * 2
+        if role: sql += " AND role=%s"; params.append(role)
+        sql += " ORDER BY created_at DESC"
+        all_items = db_q(sql, params)
+    else:
+        seed(); all_items = list(_u.values())
+        if search: all_items = [u for u in all_items if search.lower() in u["username"].lower()]
+        if role: all_items = [u for u in all_items if u["role"] == role]
+    total = len(all_items)
+    offset = (page - 1) * limit
+    items = [fmt_user(u) for u in all_items[offset:offset + limit]]
+    return {"page": page, "limit": limit, "total": total,
+            "total_pages": (total + limit - 1) // limit, "items": items}
+
+@app.patch("/admin/users/{uid}/role", tags=["Admin"])
+def admin_change_role(uid: str, new_role: str = Query(..., description="user / admin / moderator"),
+                      cu=Depends(require_admin)):
+    """Сменить роль пользователя. Только admin."""
+    if new_role not in {"user", "admin", "moderator"}:
+        raise HTTPException(400, "role must be: user / admin / moderator")
+    if use_pg():
+        if not db_q("SELECT id FROM users WHERE id=%s", (uid,), one=True):
+            raise HTTPException(404, "User not found")
+        db_x("UPDATE users SET role=%s WHERE id=%s", (new_role, uid))
+        return fmt_user(db_q("SELECT * FROM users WHERE id=%s", (uid,), one=True))
+    else:
+        seed(); u = _u.get(uid)
+        if not u: raise HTTPException(404, "User not found")
+        u["role"] = new_role; return fmt_user(u)
+
+@app.delete("/admin/users/{uid}", tags=["Admin"])
+def admin_delete_user(uid: str, cu=Depends(require_admin)):
+    """Удалить любого пользователя. Только admin."""
+    if uid == cu["id"]: raise HTTPException(400, "Cannot delete yourself")
+    if use_pg():
+        if not db_q("SELECT id FROM users WHERE id=%s", (uid,), one=True):
+            raise HTTPException(404, "User not found")
+        db_x("DELETE FROM users WHERE id=%s", (uid,))
+    else:
+        seed()
+        if uid not in _u: raise HTTPException(404, "User not found")
+        del _u[uid]
+    return {"message": f"User {uid} deleted by admin"}
+
+# ══ NOTIFICATIONS ══════════════════════════════════════════════════════════════
+_notifs: dict = {}  # memory: {user_id: [notif, ...]}
+
+def add_notif_pg(user_id, msg, type_="info"):
+    try:
+        db_x("""CREATE TABLE IF NOT EXISTS notifications(
+            id TEXT PRIMARY KEY, user_id TEXT, message TEXT,
+            type TEXT DEFAULT 'info', is_read BOOLEAN DEFAULT FALSE, created_at TEXT)""")
+        db_x("INSERT INTO notifications VALUES(%s,%s,%s,%s,%s,%s)",
+             (new_id(), user_id, msg, type_, False, now()))
+    except: pass
+
+@app.get("/notifications/", tags=["Notifications"])
+def list_notifications(cu=Depends(get_current_user)):
+    """Мои уведомления (последние 20)"""
+    if use_pg():
+        try:
+            db_x("""CREATE TABLE IF NOT EXISTS notifications(
+                id TEXT PRIMARY KEY, user_id TEXT, message TEXT,
+                type TEXT DEFAULT 'info', is_read BOOLEAN DEFAULT FALSE, created_at TEXT)""")
+            items = db_q("SELECT * FROM notifications WHERE user_id=%s ORDER BY created_at DESC LIMIT 20", (cu["id"],))
+        except: items = []
+    else:
+        items = list(reversed(_notifs.get(cu["id"], [])))[-20:]
+    unread = len([x for x in items if not x.get("is_read")])
+    return {"count": len(items), "unread": unread, "items": items}
+
+@app.patch("/notifications/{nid}/read", tags=["Notifications"])
+def mark_read(nid: str, cu=Depends(get_current_user)):
+    """Пометить уведомление как прочитанное"""
+    if use_pg():
+        n = db_q("SELECT * FROM notifications WHERE id=%s AND user_id=%s", (nid, cu["id"]), one=True)
+        if not n: raise HTTPException(404, "Notification not found")
+        db_x("UPDATE notifications SET is_read=TRUE WHERE id=%s", (nid,))
+        return db_q("SELECT * FROM notifications WHERE id=%s", (nid,), one=True)
+    else:
+        for n in _notifs.get(cu["id"], []):
+            if n["id"] == nid: n["is_read"] = True; return n
+        raise HTTPException(404, "Notification not found")
+
+@app.patch("/notifications/read-all", tags=["Notifications"])
+def mark_all_read(cu=Depends(get_current_user)):
+    """Пометить все уведомления как прочитанные"""
+    if use_pg():
+        db_x("UPDATE notifications SET is_read=TRUE WHERE user_id=%s", (cu["id"],))
+    else:
+        for n in _notifs.get(cu["id"], []): n["is_read"] = True
+    return {"message": "All notifications marked as read"}
+
+# ══ ACTIVITY LOG ══════════════════════════════════════════════════════════════
+@app.get("/activity/", tags=["Activity"])
+def get_activity(limit: int = Query(20, ge=1, le=100), cu=Depends(require_admin)):
+    """
+    Лог последних действий на платформе. Только admin.
+    Показывает последние записи из всех таблиц по created_at.
+    """
+    if use_pg():
+        items = []
+        for table, label in [("users","user_registered"),("products","product_created"),
+                              ("posts","post_created"),("tasks","task_created"),("payments","payment_made")]:
+            try:
+                rows = db_q(f"SELECT id, created_at, '{label}' as action FROM {table} ORDER BY created_at DESC LIMIT %s", (limit,))
+                items.extend(rows)
+            except: pass
+        items = sorted(items, key=lambda x: x.get("created_at",""), reverse=True)[:limit]
+    else:
+        seed(); items = []
+        for col, label in [(_u,"user_registered"),(_p,"product_created"),
+                           (_po,"post_created"),(_t,"task_created"),(_pay,"payment_made")]:
+            for obj in col.values():
+                items.append({"id":obj["id"],"action":label,"created_at":obj.get("created_at","")})
+        items = sorted(items, key=lambda x: x["created_at"], reverse=True)[:limit]
+    return {"count": len(items), "items": items}
